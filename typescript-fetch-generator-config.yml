@@ -1,1 +1,2 @@
 additionalProperties:
+  npmName: '@busyas/test-client'
