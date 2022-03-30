@@ -1,2 +1,15 @@
 additionalProperties:
   npmName: '@busyas/test-client'
+globalProperties:
+  apiDocs: false
+  modelDocs: false
+  apiTests: false
+  modelTests: false
+  generateAliasAsModel: false
+  
+globalProperty:
+  apiDocs: false
+  modelDocs: false
+  apiTests: false
+  modelTests: false
+  generateAliasAsModel: false
