@@ -36,7 +36,7 @@ jobs:
           with:
             generator: typescript-fetch
             config-file: typescript-fetch-generator-config.yml
-            openapi-url: https://api.busy.no/openapi.json
+            openapi-url: https://tripletex.no/v2/swagger.json
 
         # Do something with the generated client (likely publishing it somewhere)
         - name: Do something with the client
