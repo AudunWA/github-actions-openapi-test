@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: Generate client libraries
 
 # Controls when the workflow will run
 on:
@@ -9,9 +9,9 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-  #schedule:
+  schedule:
   # Every hour
-  #- cron:  '0 * * * *'
+  - cron:  '0 * * * *'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -32,6 +32,8 @@ jobs:
           
         - name: Download spec
           run: curl -O https://tripletex.no/v2/swagger.json
+        - name: Find spec version
+          run: VERSION=$(npx json -f swagger.json info.version)
         - name: Generate
           run: npx oazapfts swagger.json api.ts
         - name: Check if there are changes
@@ -43,7 +45,7 @@ jobs:
             git config user.name 'github-actions[bot]'
             git config user.email 'github-actions[bot]@users.noreply.github.com'
             git add swagger.json api.ts
-            git commit -m "Update lib"
+            git commit -m "$VERSION"
         - name: Push changes
           if: steps.changes.outputs.changed == 1
           uses: ad-m/github-push-action@master
