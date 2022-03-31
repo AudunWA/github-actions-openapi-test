@@ -1539,15 +1539,15 @@ export type DocumentArchive = {
     archiveDate?: string;
     mimeType: string;
 };
-export type ResponseWrapperDocumentArchive = {
-    value?: DocumentArchive;
-};
 export type ListResponseDocumentArchive = {
     fullResultSize?: number;
     "from"?: number;
     count?: number;
     versionDigest?: string;
     values?: DocumentArchive[];
+};
+export type ResponseWrapperDocumentArchive = {
+    value?: DocumentArchive;
 };
 export type ListResponseEmployee = {
     fullResultSize?: number;
@@ -2170,15 +2170,15 @@ export type ListResponseOrderGroup = {
 export type ResponseWrapperOrderGroup = {
     value?: OrderGroup;
 };
+export type ResponseWrapperOrderLine = {
+    value?: OrderLine;
+};
 export type ListResponseOrderLine = {
     fullResultSize?: number;
     "from"?: number;
     count?: number;
     versionDigest?: string;
     values?: OrderLine[];
-};
-export type ResponseWrapperOrderLine = {
-    value?: OrderLine;
 };
 export type ExternalProduct = {
     id?: number;
@@ -2422,15 +2422,15 @@ export type ListResponseProjectOrderLine = {
 export type ResponseWrapperProjectOrderLine = {
     value?: ProjectOrderLine;
 };
+export type ResponseWrapperProjectParticipant = {
+    value?: ProjectParticipant;
+};
 export type ListResponseProjectParticipant = {
     fullResultSize?: number;
     "from"?: number;
     count?: number;
     versionDigest?: string;
     values?: ProjectParticipant[];
-};
-export type ResponseWrapperProjectParticipant = {
-    value?: ProjectParticipant;
 };
 export type ProjectPeriodInvoicingReserve = {
     invoiceFeeReserveCurrency?: number;
@@ -3210,15 +3210,15 @@ export type SupplierInvoice = {
     originalInvoiceDocumentId?: number;
     approvalListElements?: VoucherApprovalListElement[];
 };
+export type ResponseWrapperSupplierInvoice = {
+    value?: SupplierInvoice;
+};
 export type ListResponseSupplierInvoice = {
     fullResultSize?: number;
     "from"?: number;
     count?: number;
     versionDigest?: string;
     values?: SupplierInvoice[];
-};
-export type ResponseWrapperSupplierInvoice = {
-    value?: SupplierInvoice;
 };
 export type ResponseWrapperVoucherApprovalListElement = {
     value?: VoucherApprovalListElement;
@@ -3240,6 +3240,9 @@ export type ListResponseCompanyHolidays = {
 };
 export type ResponseWrapperCompanyHolidays = {
     value?: CompanyHolidays;
+};
+export type ResponseWrapperBigDecimal = {
+    value?: number;
 };
 export type TimeClock = {
     id?: number;
@@ -3276,13 +3279,6 @@ export type TimesheetEntry = {
     hourlyCost?: number;
     hourlyCostPercentage?: number;
 };
-export type ListResponseTimesheetEntry = {
-    fullResultSize?: number;
-    "from"?: number;
-    count?: number;
-    versionDigest?: string;
-    values?: TimesheetEntry[];
-};
 export type TimesheetEntrySearchResponse = {
     fullResultSize?: number;
     "from"?: number;
@@ -3294,8 +3290,12 @@ export type TimesheetEntrySearchResponse = {
 export type ResponseWrapperTimesheetEntry = {
     value?: TimesheetEntry;
 };
-export type ResponseWrapperBigDecimal = {
-    value?: number;
+export type ListResponseTimesheetEntry = {
+    fullResultSize?: number;
+    "from"?: number;
+    count?: number;
+    versionDigest?: string;
+    values?: TimesheetEntry[];
 };
 export type HourSummary = {
     sumHours?: number;
@@ -3659,19 +3659,6 @@ export type ResponseWrapperInteger = {
     value?: number;
 };
 /**
- * Add multiple activities.
- */
-export function activityListPostList(body?: Activity[], opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 201;
-        data: ListResponseActivity;
-    }>("/activity/list", oazapfts.json({
-        ...opts,
-        method: "POST",
-        body
-    }));
-}
-/**
  * Find activities corresponding with sent data.
  */
 export function activitySearch({ id, name, number, description, isProjectActivity, isGeneral, isChargeable, isTask, isInactive, from, count, sorting, fields }: {
@@ -3722,6 +3709,19 @@ export function activityPost(body?: Blob, opts?: Oazapfts.RequestOpts) {
         method: "POST",
         body
     });
+}
+/**
+ * Add multiple activities.
+ */
+export function activityListPostList(body?: Activity[], opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 201;
+        data: ListResponseActivity;
+    }>("/activity/list", oazapfts.json({
+        ...opts,
+        method: "POST",
+        body
+    }));
 }
 /**
  * Find applicable time sheet activities for an employee on a specific day.
@@ -3826,19 +3826,6 @@ export function deliveryAddressSearch({ id, addressLine1, addressLine2, postalCo
     });
 }
 /**
- * Create several assets.
- */
-export function assetListPostList(body?: Blob, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 201;
-        data: ListResponseAsset;
-    }>("/asset/list", {
-        ...opts,
-        method: "POST",
-        body
-    });
-}
-/**
  * Find assets corresponding with sent data.
  */
 export function assetSearch({ id, name, description, from, count, sorting, fields }: {
@@ -3873,6 +3860,19 @@ export function assetPost(body?: Blob, opts?: Oazapfts.RequestOpts) {
         status: 201;
         data: ResponseWrapperAsset;
     }>("/asset", {
+        ...opts,
+        method: "POST",
+        body
+    });
+}
+/**
+ * Create several assets.
+ */
+export function assetListPostList(body?: Blob, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 201;
+        data: ListResponseAsset;
+    }>("/asset/list", {
         ...opts,
         method: "POST",
         body
@@ -5204,61 +5204,6 @@ export function documentGet(id: number, { fields }: {
     });
 }
 /**
- * [BETA] Upload a file to the document archive reception. Send as multipart form.
- */
-export function documentArchiveReceptionReceptionPost(body: {
-    file: Blob;
-}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 201;
-        data: ResponseWrapperDocumentArchive;
-    }>("/documentArchive/reception", oazapfts.multipart({
-        ...opts,
-        method: "POST",
-        body
-    }));
-}
-/**
- * [BETA] Find documents archived associated with project object type.
- */
-export function documentArchiveProjectGetProject(id: number, { periodDateFrom, periodDateTo, from, count, sorting, fields }: {
-    periodDateFrom?: string;
-    periodDateTo?: string;
-    "from"?: number;
-    count?: number;
-    sorting?: string;
-    fields?: string;
-} = {}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ListResponseDocumentArchive;
-    }>(`/documentArchive/project/${id}${QS.query(QS.form({
-        periodDateFrom,
-        periodDateTo,
-        from,
-        count,
-        sorting,
-        fields
-    }))}`, {
-        ...opts
-    });
-}
-/**
- * [BETA] Upload file to Project Document Archive.
- */
-export function documentArchiveProjectProjectPost(id: number, body: {
-    file: Blob;
-}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 201;
-        data: ResponseWrapperDocumentArchive;
-    }>(`/documentArchive/project/${id}`, oazapfts.multipart({
-        ...opts,
-        method: "POST",
-        body
-    }));
-}
-/**
  * [BETA] Find documents archived associated with customer object type.
  */
 export function documentArchiveCustomerGetCustomer(id: number, { periodDateFrom, periodDateTo, from, count, sorting, fields }: {
@@ -5293,46 +5238,6 @@ export function documentArchiveCustomerCustomerPost(id: number, body: {
         status: 201;
         data: ResponseWrapperDocumentArchive;
     }>(`/documentArchive/customer/${id}`, oazapfts.multipart({
-        ...opts,
-        method: "POST",
-        body
-    }));
-}
-/**
- * [BETA] Find documents archived associated with supplier object type.
- */
-export function documentArchiveSupplierGetSupplier(id: number, { periodDateFrom, periodDateTo, from, count, sorting, fields }: {
-    periodDateFrom?: string;
-    periodDateTo?: string;
-    "from"?: number;
-    count?: number;
-    sorting?: string;
-    fields?: string;
-} = {}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ListResponseDocumentArchive;
-    }>(`/documentArchive/supplier/${id}${QS.query(QS.form({
-        periodDateFrom,
-        periodDateTo,
-        from,
-        count,
-        sorting,
-        fields
-    }))}`, {
-        ...opts
-    });
-}
-/**
- * [BETA] Upload file to Supplier Document Archive.
- */
-export function documentArchiveSupplierSupplierPost(id: number, body: {
-    file: Blob;
-}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 201;
-        data: ResponseWrapperDocumentArchive;
-    }>(`/documentArchive/supplier/${id}`, oazapfts.multipart({
         ...opts,
         method: "POST",
         body
@@ -5499,6 +5404,101 @@ export function documentArchiveProspectProspectPost(id: number, body: {
     }));
 }
 /**
+ * [BETA] Find documents archived associated with supplier object type.
+ */
+export function documentArchiveSupplierGetSupplier(id: number, { periodDateFrom, periodDateTo, from, count, sorting, fields }: {
+    periodDateFrom?: string;
+    periodDateTo?: string;
+    "from"?: number;
+    count?: number;
+    sorting?: string;
+    fields?: string;
+} = {}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ListResponseDocumentArchive;
+    }>(`/documentArchive/supplier/${id}${QS.query(QS.form({
+        periodDateFrom,
+        periodDateTo,
+        from,
+        count,
+        sorting,
+        fields
+    }))}`, {
+        ...opts
+    });
+}
+/**
+ * [BETA] Upload file to Supplier Document Archive.
+ */
+export function documentArchiveSupplierSupplierPost(id: number, body: {
+    file: Blob;
+}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 201;
+        data: ResponseWrapperDocumentArchive;
+    }>(`/documentArchive/supplier/${id}`, oazapfts.multipart({
+        ...opts,
+        method: "POST",
+        body
+    }));
+}
+/**
+ * [BETA] Find documents archived associated with project object type.
+ */
+export function documentArchiveProjectGetProject(id: number, { periodDateFrom, periodDateTo, from, count, sorting, fields }: {
+    periodDateFrom?: string;
+    periodDateTo?: string;
+    "from"?: number;
+    count?: number;
+    sorting?: string;
+    fields?: string;
+} = {}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ListResponseDocumentArchive;
+    }>(`/documentArchive/project/${id}${QS.query(QS.form({
+        periodDateFrom,
+        periodDateTo,
+        from,
+        count,
+        sorting,
+        fields
+    }))}`, {
+        ...opts
+    });
+}
+/**
+ * [BETA] Upload file to Project Document Archive.
+ */
+export function documentArchiveProjectProjectPost(id: number, body: {
+    file: Blob;
+}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 201;
+        data: ResponseWrapperDocumentArchive;
+    }>(`/documentArchive/project/${id}`, oazapfts.multipart({
+        ...opts,
+        method: "POST",
+        body
+    }));
+}
+/**
+ * [BETA] Upload a file to the document archive reception. Send as multipart form.
+ */
+export function documentArchiveReceptionReceptionPost(body: {
+    file: Blob;
+}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 201;
+        data: ResponseWrapperDocumentArchive;
+    }>("/documentArchive/reception", oazapfts.multipart({
+        ...opts,
+        method: "POST",
+        body
+    }));
+}
+/**
  * [BETA] Update document archive.
  */
 export function documentArchivePut(id: number, body?: Blob, opts?: Oazapfts.RequestOpts) {
@@ -5518,19 +5518,6 @@ export function documentArchiveDelete(id: number, opts?: Oazapfts.RequestOpts) {
     return oazapfts.fetchText(`/documentArchive/${id}`, {
         ...opts,
         method: "DELETE"
-    });
-}
-/**
- * [BETA] Create several employees.
- */
-export function employeeListPostList(body?: Blob, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 201;
-        data: ListResponseEmployee;
-    }>("/employee/list", {
-        ...opts,
-        method: "POST",
-        body
     });
 }
 /**
@@ -5594,6 +5581,19 @@ export function employeePost(body?: Blob, opts?: Oazapfts.RequestOpts) {
     });
 }
 /**
+ * [BETA] Create several employees.
+ */
+export function employeeListPostList(body?: Blob, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 201;
+        data: ListResponseEmployee;
+    }>("/employee/list", {
+        ...opts,
+        method: "POST",
+        body
+    });
+}
+/**
  * Get employee by ID.
  */
 export function employeeGet(id: number, { fields }: {
@@ -5619,43 +5619,6 @@ export function employeePut(id: number, body?: Blob, opts?: Oazapfts.RequestOpts
         ...opts,
         method: "PUT",
         body
-    });
-}
-/**
- * [BETA] Create new employee categories.
- */
-export function employeeCategoryListPostList(body?: Blob, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 201;
-        data: ListResponseEmployeeCategory;
-    }>("/employee/category/list", {
-        ...opts,
-        method: "POST",
-        body
-    });
-}
-/**
- * [BETA] Update multiple employee categories.
- */
-export function employeeCategoryListPutList(body?: Blob, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ListResponseEmployeeCategory;
-    }>("/employee/category/list", {
-        ...opts,
-        method: "PUT",
-        body
-    });
-}
-/**
- * [BETA] Delete multiple employee categories
- */
-export function employeeCategoryListDeleteByIds(ids: string, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchText(`/employee/category/list${QS.query(QS.form({
-        ids
-    }))}`, {
-        ...opts,
-        method: "DELETE"
     });
 }
 /**
@@ -5696,6 +5659,43 @@ export function employeeCategoryPost(body?: Blob, opts?: Oazapfts.RequestOpts) {
         ...opts,
         method: "POST",
         body
+    });
+}
+/**
+ * [BETA] Create new employee categories.
+ */
+export function employeeCategoryListPostList(body?: Blob, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 201;
+        data: ListResponseEmployeeCategory;
+    }>("/employee/category/list", {
+        ...opts,
+        method: "POST",
+        body
+    });
+}
+/**
+ * [BETA] Update multiple employee categories.
+ */
+export function employeeCategoryListPutList(body?: Blob, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ListResponseEmployeeCategory;
+    }>("/employee/category/list", {
+        ...opts,
+        method: "PUT",
+        body
+    });
+}
+/**
+ * [BETA] Delete multiple employee categories
+ */
+export function employeeCategoryListDeleteByIds(ids: string, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchText(`/employee/category/list${QS.query(QS.form({
+        ids
+    }))}`, {
+        ...opts,
+        method: "DELETE"
     });
 }
 /**
@@ -6480,6 +6480,40 @@ export function eventGet({ fields }: {
     });
 }
 /**
+ * [BETA] Find all ongoing subscriptions.
+ */
+export function eventSubscriptionSearch({ from, count, sorting, fields }: {
+    "from"?: number;
+    count?: number;
+    sorting?: string;
+    fields?: string;
+} = {}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ListResponseSubscription;
+    }>(`/event/subscription${QS.query(QS.form({
+        from,
+        count,
+        sorting,
+        fields
+    }))}`, {
+        ...opts
+    });
+}
+/**
+ * [BETA] Create a new subscription for current EmployeeToken.
+ */
+export function eventSubscriptionPost(body?: Blob, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 201;
+        data: ResponseWrapperSubscription;
+    }>("/event/subscription", {
+        ...opts,
+        method: "POST",
+        body
+    });
+}
+/**
  * [BETA] Create multiple subscriptions for current EmployeeToken.
  */
 export function eventSubscriptionListPostList(body?: Blob, opts?: Oazapfts.RequestOpts) {
@@ -6514,40 +6548,6 @@ export function eventSubscriptionListDeleteByIds(ids: string, opts?: Oazapfts.Re
     }))}`, {
         ...opts,
         method: "DELETE"
-    });
-}
-/**
- * [BETA] Find all ongoing subscriptions.
- */
-export function eventSubscriptionSearch({ from, count, sorting, fields }: {
-    "from"?: number;
-    count?: number;
-    sorting?: string;
-    fields?: string;
-} = {}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ListResponseSubscription;
-    }>(`/event/subscription${QS.query(QS.form({
-        from,
-        count,
-        sorting,
-        fields
-    }))}`, {
-        ...opts
-    });
-}
-/**
- * [BETA] Create a new subscription for current EmployeeToken.
- */
-export function eventSubscriptionPost(body?: Blob, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 201;
-        data: ResponseWrapperSubscription;
-    }>("/event/subscription", {
-        ...opts,
-        method: "POST",
-        body
     });
 }
 /**
@@ -6696,43 +6696,6 @@ export function inventoryInventoriesSearch(dateFrom: string, dateTo: string, { p
     });
 }
 /**
- * [BETA] Add multiple inventory locations. Only available for users that have activated the Logistics Plus Beta-program in 'Our customer account'
- */
-export function inventoryLocationListPostList(body?: Blob, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 201;
-        data: ListResponseInventoryLocation;
-    }>("/inventory/location/list", {
-        ...opts,
-        method: "POST",
-        body
-    });
-}
-/**
- * [BETA] Update multiple inventory locations. Only available for users that have activated the Logistics Plus Beta-program in 'Our customer account'
- */
-export function inventoryLocationListPutList(body?: Blob, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ListResponseInventoryLocation;
-    }>("/inventory/location/list", {
-        ...opts,
-        method: "PUT",
-        body
-    });
-}
-/**
- * [BETA] Delete inventory location. Only available for users that have activated the Logistics Plus Beta-program in 'Our customer account'
- */
-export function inventoryLocationListDeleteByIds(ids: string, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchText(`/inventory/location/list${QS.query(QS.form({
-        ids
-    }))}`, {
-        ...opts,
-        method: "DELETE"
-    });
-}
-/**
  * [BETA] Find inventory locations by inventory ID. Only available for users that have activated the Logistics Plus Beta-program in 'Our customer account'
  */
 export function inventoryLocationSearch({ warehouseId, isInactive, name, from, count, sorting, fields }: {
@@ -6770,6 +6733,43 @@ export function inventoryLocationPost(body?: Blob, opts?: Oazapfts.RequestOpts) 
         ...opts,
         method: "POST",
         body
+    });
+}
+/**
+ * [BETA] Add multiple inventory locations. Only available for users that have activated the Logistics Plus Beta-program in 'Our customer account'
+ */
+export function inventoryLocationListPostList(body?: Blob, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 201;
+        data: ListResponseInventoryLocation;
+    }>("/inventory/location/list", {
+        ...opts,
+        method: "POST",
+        body
+    });
+}
+/**
+ * [BETA] Update multiple inventory locations. Only available for users that have activated the Logistics Plus Beta-program in 'Our customer account'
+ */
+export function inventoryLocationListPutList(body?: Blob, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ListResponseInventoryLocation;
+    }>("/inventory/location/list", {
+        ...opts,
+        method: "PUT",
+        body
+    });
+}
+/**
+ * [BETA] Delete inventory location. Only available for users that have activated the Logistics Plus Beta-program in 'Our customer account'
+ */
+export function inventoryLocationListDeleteByIds(ids: string, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchText(`/inventory/location/list${QS.query(QS.form({
+        ids
+    }))}`, {
+        ...opts,
+        method: "DELETE"
     });
 }
 /**
@@ -7289,43 +7289,6 @@ export function ledgerSearch(dateFrom: string, dateTo: string, { openPostings, a
     });
 }
 /**
- * [BETA] Create several accounts.
- */
-export function ledgerAccountListPostList(body?: Blob, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 201;
-        data: ListResponseAccount;
-    }>("/ledger/account/list", {
-        ...opts,
-        method: "POST",
-        body
-    });
-}
-/**
- * [BETA] Update multiple accounts.
- */
-export function ledgerAccountListPutList(body?: Blob, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ListResponseAccount;
-    }>("/ledger/account/list", {
-        ...opts,
-        method: "PUT",
-        body
-    });
-}
-/**
- * [BETA] Delete multiple accounts.
- */
-export function ledgerAccountListDeleteByIds(ids: string, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchText(`/ledger/account/list${QS.query(QS.form({
-        ids
-    }))}`, {
-        ...opts,
-        method: "DELETE"
-    });
-}
-/**
  * Find accounts corresponding with sent data.
  */
 export function ledgerAccountSearch({ id, number, isBankAccount, isInactive, isApplicableForSupplierInvoice, ledgerType, isBalanceAccount, from, count, sorting, fields }: {
@@ -7371,6 +7334,43 @@ export function ledgerAccountPost(body?: Blob, opts?: Oazapfts.RequestOpts) {
         ...opts,
         method: "POST",
         body
+    });
+}
+/**
+ * [BETA] Create several accounts.
+ */
+export function ledgerAccountListPostList(body?: Blob, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 201;
+        data: ListResponseAccount;
+    }>("/ledger/account/list", {
+        ...opts,
+        method: "POST",
+        body
+    });
+}
+/**
+ * [BETA] Update multiple accounts.
+ */
+export function ledgerAccountListPutList(body?: Blob, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ListResponseAccount;
+    }>("/ledger/account/list", {
+        ...opts,
+        method: "PUT",
+        body
+    });
+}
+/**
+ * [BETA] Delete multiple accounts.
+ */
+export function ledgerAccountListDeleteByIds(ids: string, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchText(`/ledger/account/list${QS.query(QS.form({
+        ids
+    }))}`, {
+        ...opts,
+        method: "DELETE"
     });
 }
 /**
@@ -7856,24 +7856,21 @@ export function ledgerVoucherPost(body?: Blob, { sendToLedger }: {
     });
 }
 /**
- * [BETA] Upload a document to create one or more vouchers. Valid document formats are PDF, PNG, JPEG, TIFF and EHF. Send as multipart form.
+ * [BETA] Update multiple vouchers. Postings with guiRow==0 will be deleted and regenerated.
  */
-export function ledgerVoucherImportDocumentImportDocument(body: {
-    file: Blob;
-    description?: string;
-}, { split }: {
-    split?: boolean;
+export function ledgerVoucherListPutList(body?: Blob, { sendToLedger }: {
+    sendToLedger?: boolean;
 } = {}, opts?: Oazapfts.RequestOpts) {
     return oazapfts.fetchJson<{
-        status: 201;
+        status: 200;
         data: ListResponseVoucher;
-    }>(`/ledger/voucher/importDocument${QS.query(QS.form({
-        split
-    }))}`, oazapfts.multipart({
+    }>(`/ledger/voucher/list${QS.query(QS.form({
+        sendToLedger
+    }))}`, {
         ...opts,
-        method: "POST",
+        method: "PUT",
         body
-    }));
+    });
 }
 /**
  * Upload attachment to voucher. If the voucher already has an attachment the content will be appended to the existing attachment as new PDF page(s). Valid document formats are PDF, PNG, JPEG and TIFF. Non PDF formats will be converted to PDF. Send as multipart form.
@@ -7905,34 +7902,6 @@ export function ledgerVoucherAttachmentDeleteAttachment(voucherId: number, { ver
     });
 }
 /**
- * [BETA] Update multiple vouchers. Postings with guiRow==0 will be deleted and regenerated.
- */
-export function ledgerVoucherListPutList(body?: Blob, { sendToLedger }: {
-    sendToLedger?: boolean;
-} = {}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ListResponseVoucher;
-    }>(`/ledger/voucher/list${QS.query(QS.form({
-        sendToLedger
-    }))}`, {
-        ...opts,
-        method: "PUT",
-        body
-    });
-}
-/**
- * Get PDF representation of voucher by ID.
- */
-export function ledgerVoucherPdfDownloadPdf(voucherId: number, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchBlob<{
-        status: 200;
-        data: Blob;
-    }>(`/ledger/voucher/${voucherId}/pdf`, {
-        ...opts
-    });
-}
-/**
  * [BETA] Send voucher to inbox.
  */
 export function ledgerVoucherSendToInboxSendToInbox(id: number, { version, comment }: {
@@ -7948,6 +7917,17 @@ export function ledgerVoucherSendToInboxSendToInbox(id: number, { version, comme
     }))}`, {
         ...opts,
         method: "PUT"
+    });
+}
+/**
+ * Get PDF representation of voucher by ID.
+ */
+export function ledgerVoucherPdfDownloadPdf(voucherId: number, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchBlob<{
+        status: 200;
+        data: Blob;
+    }>(`/ledger/voucher/${voucherId}/pdf`, {
+        ...opts
     });
 }
 /**
@@ -7967,6 +7947,26 @@ export function ledgerVoucherSendToLedgerSendToLedger(id: number, { version, num
         ...opts,
         method: "PUT"
     });
+}
+/**
+ * [BETA] Upload a document to create one or more vouchers. Valid document formats are PDF, PNG, JPEG, TIFF and EHF. Send as multipart form.
+ */
+export function ledgerVoucherImportDocumentImportDocument(body: {
+    file: Blob;
+    description?: string;
+}, { split }: {
+    split?: boolean;
+} = {}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 201;
+        data: ListResponseVoucher;
+    }>(`/ledger/voucher/importDocument${QS.query(QS.form({
+        split
+    }))}`, oazapfts.multipart({
+        ...opts,
+        method: "POST",
+        body
+    }));
 }
 /**
  * [BETA] Find non-posted vouchers.
@@ -8164,19 +8164,6 @@ export function ledgerVoucherHistoricalReverseHistoricalVouchersReverseHistorica
     });
 }
 /**
- * [BETA] Close postings.
- */
-export function ledgerVoucherHistoricalClosePostingsClosePostings({ postingIds }: {
-    postingIds?: string;
-} = {}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchText(`/ledger/voucher/historical/:closePostings${QS.query(QS.form({
-        postingIds
-    }))}`, {
-        ...opts,
-        method: "PUT"
-    });
-}
-/**
  * [BETA] Create one employee, based on import from external system. Validation is less strict, ie. employee department isn't required.
  */
 export function ledgerVoucherHistoricalEmployeePostEmployee(body?: Blob, opts?: Oazapfts.RequestOpts) {
@@ -8204,6 +8191,19 @@ export function ledgerVoucherHistoricalHistoricalPostHistorical(body?: Blob, { c
         ...opts,
         method: "POST",
         body
+    });
+}
+/**
+ * [BETA] Close postings.
+ */
+export function ledgerVoucherHistoricalClosePostingsClosePostings({ postingIds }: {
+    postingIds?: string;
+} = {}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchText(`/ledger/voucher/historical/:closePostings${QS.query(QS.form({
+        postingIds
+    }))}`, {
+        ...opts,
+        method: "PUT"
     });
 }
 /**
@@ -8528,19 +8528,6 @@ export function orderOrderGroupDelete(id: number, opts?: Oazapfts.RequestOpts) {
     });
 }
 /**
- * Create multiple order lines.
- */
-export function orderOrderlineListPostList(body?: Blob, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 201;
-        data: ListResponseOrderLine;
-    }>("/order/orderline/list", {
-        ...opts,
-        method: "POST",
-        body
-    });
-}
-/**
  * Create order line. When creating several order lines, use /list for better performance.
  */
 export function orderOrderlinePost(body?: Blob, opts?: Oazapfts.RequestOpts) {
@@ -8548,6 +8535,19 @@ export function orderOrderlinePost(body?: Blob, opts?: Oazapfts.RequestOpts) {
         status: 201;
         data: ResponseWrapperOrderLine;
     }>("/order/orderline", {
+        ...opts,
+        method: "POST",
+        body
+    });
+}
+/**
+ * Create multiple order lines.
+ */
+export function orderOrderlineListPostList(body?: Blob, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 201;
+        data: ListResponseOrderLine;
+    }>("/order/orderline/list", {
         ...opts,
         method: "POST",
         body
@@ -9110,43 +9110,6 @@ export function productLogisticsSettingsPut(body?: Blob, opts?: Oazapfts.Request
     });
 }
 /**
- * [BETA] Add multiple products groups.
- */
-export function productGroupListPostList(body?: Blob, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 201;
-        data: ListResponseProductGroup;
-    }>("/product/group/list", {
-        ...opts,
-        method: "POST",
-        body
-    });
-}
-/**
- * [BETA] Update a list of product groups.
- */
-export function productGroupListPutList(body?: Blob, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ListResponseProductGroup;
-    }>("/product/group/list", {
-        ...opts,
-        method: "PUT",
-        body
-    });
-}
-/**
- * [BETA] Delete multiple product groups.
- */
-export function productGroupListDeleteByIds(ids: string, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchText(`/product/group/list${QS.query(QS.form({
-        ids
-    }))}`, {
-        ...opts,
-        method: "DELETE"
-    });
-}
-/**
  * [BETA] Find product group with sent data
  */
 export function productGroupSearch({ id, name, from, count, sorting, fields }: {
@@ -9182,6 +9145,43 @@ export function productGroupPost(body?: Blob, opts?: Oazapfts.RequestOpts) {
         ...opts,
         method: "POST",
         body
+    });
+}
+/**
+ * [BETA] Add multiple products groups.
+ */
+export function productGroupListPostList(body?: Blob, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 201;
+        data: ListResponseProductGroup;
+    }>("/product/group/list", {
+        ...opts,
+        method: "POST",
+        body
+    });
+}
+/**
+ * [BETA] Update a list of product groups.
+ */
+export function productGroupListPutList(body?: Blob, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ListResponseProductGroup;
+    }>("/product/group/list", {
+        ...opts,
+        method: "PUT",
+        body
+    });
+}
+/**
+ * [BETA] Delete multiple product groups.
+ */
+export function productGroupListDeleteByIds(ids: string, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchText(`/product/group/list${QS.query(QS.form({
+        ids
+    }))}`, {
+        ...opts,
+        method: "DELETE"
     });
 }
 /**
@@ -9247,30 +9247,6 @@ export function productGroupQueryQuery({ query, name, fields, from, count, sorti
     });
 }
 /**
- * [BETA] Add multiple products group relations.
- */
-export function productGroupRelationListPostList(body?: Blob, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 201;
-        data: ListResponseProductGroupRelation;
-    }>("/product/groupRelation/list", {
-        ...opts,
-        method: "POST",
-        body
-    });
-}
-/**
- * [BETA] Delete multiple product group relations.
- */
-export function productGroupRelationListDeleteByIds(ids: string, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchText(`/product/groupRelation/list${QS.query(QS.form({
-        ids
-    }))}`, {
-        ...opts,
-        method: "DELETE"
-    });
-}
-/**
  * [BETA] Find product group relation with sent data.
  */
 export function productGroupRelationSearch({ id, productId, productGroupId, from, count, sorting, fields }: {
@@ -9308,6 +9284,30 @@ export function productGroupRelationPost(body?: Blob, opts?: Oazapfts.RequestOpt
         ...opts,
         method: "POST",
         body
+    });
+}
+/**
+ * [BETA] Add multiple products group relations.
+ */
+export function productGroupRelationListPostList(body?: Blob, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 201;
+        data: ListResponseProductGroupRelation;
+    }>("/product/groupRelation/list", {
+        ...opts,
+        method: "POST",
+        body
+    });
+}
+/**
+ * [BETA] Delete multiple product group relations.
+ */
+export function productGroupRelationListDeleteByIds(ids: string, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchText(`/product/groupRelation/list${QS.query(QS.form({
+        ids
+    }))}`, {
+        ...opts,
+        method: "DELETE"
     });
 }
 /**
@@ -9541,43 +9541,6 @@ export function productUnitMasterSearch({ id, name, nameShort, commonCode, peppo
     });
 }
 /**
- * [BETA] Register new projects. Multiple projects for different users can be sent in the same request.
- */
-export function projectListPostList(body?: Blob, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 201;
-        data: ListResponseProject;
-    }>("/project/list", {
-        ...opts,
-        method: "POST",
-        body
-    });
-}
-/**
- * [BETA] Update multiple projects.
- */
-export function projectListPutList(body?: Blob, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ListResponseProject;
-    }>("/project/list", {
-        ...opts,
-        method: "PUT",
-        body
-    });
-}
-/**
- * [BETA] Delete projects.
- */
-export function projectListDeleteByIds(ids: string, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchText(`/project/list${QS.query(QS.form({
-        ids
-    }))}`, {
-        ...opts,
-        method: "DELETE"
-    });
-}
-/**
  * Find projects corresponding with sent data.
  */
 export function projectSearch({ id, name, number, isOffer, projectManagerId, employeeInProjectId, departmentId, startDateFrom, startDateTo, endDateFrom, endDateTo, isClosed, customerId, externalAccountsNumber, from, count, sorting, fields }: {
@@ -9647,6 +9610,43 @@ export function projectDeleteList(body?: Blob, opts?: Oazapfts.RequestOpts) {
         ...opts,
         method: "DELETE",
         body
+    });
+}
+/**
+ * [BETA] Register new projects. Multiple projects for different users can be sent in the same request.
+ */
+export function projectListPostList(body?: Blob, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 201;
+        data: ListResponseProject;
+    }>("/project/list", {
+        ...opts,
+        method: "POST",
+        body
+    });
+}
+/**
+ * [BETA] Update multiple projects.
+ */
+export function projectListPutList(body?: Blob, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ListResponseProject;
+    }>("/project/list", {
+        ...opts,
+        method: "PUT",
+        body
+    });
+}
+/**
+ * [BETA] Delete projects.
+ */
+export function projectListDeleteByIds(ids: string, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchText(`/project/list${QS.query(QS.form({
+        ids
+    }))}`, {
+        ...opts,
+        method: "DELETE"
     });
 }
 /**
@@ -9806,19 +9806,6 @@ export function projectCategoryPut(id: number, body?: Blob, opts?: Oazapfts.Requ
     });
 }
 /**
- * [BETA] Create multiple order lines.
- */
-export function projectOrderlineListPostList(body?: Blob, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 201;
-        data: ListResponseProjectOrderLine;
-    }>("/project/orderline/list", {
-        ...opts,
-        method: "POST",
-        body
-    });
-}
-/**
  * [BETA] Find all order lines for project.
  */
 export function projectOrderlineSearch(projectId: number, { from, count, sorting, fields }: {
@@ -9848,6 +9835,19 @@ export function projectOrderlinePost(body?: Blob, opts?: Oazapfts.RequestOpts) {
         status: 201;
         data: ResponseWrapperProjectOrderLine;
     }>("/project/orderline", {
+        ...opts,
+        method: "POST",
+        body
+    });
+}
+/**
+ * [BETA] Create multiple order lines.
+ */
+export function projectOrderlineListPostList(body?: Blob, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 201;
+        data: ListResponseProjectOrderLine;
+    }>("/project/orderline/list", {
         ...opts,
         method: "POST",
         body
@@ -9891,6 +9891,19 @@ export function projectOrderlineDelete(id: number, opts?: Oazapfts.RequestOpts) 
     });
 }
 /**
+ * [BETA] Add new project participant.
+ */
+export function projectParticipantPost(body?: Blob, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 201;
+        data: ResponseWrapperProjectParticipant;
+    }>("/project/participant", {
+        ...opts,
+        method: "POST",
+        body
+    });
+}
+/**
  * [BETA] Add new project participant. Multiple project participants can be sent in the same request.
  */
 export function projectParticipantListPostList(body?: Blob, opts?: Oazapfts.RequestOpts) {
@@ -9912,19 +9925,6 @@ export function projectParticipantListDeleteByIds(ids: string, opts?: Oazapfts.R
     }))}`, {
         ...opts,
         method: "DELETE"
-    });
-}
-/**
- * [BETA] Add new project participant.
- */
-export function projectParticipantPost(body?: Blob, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 201;
-        data: ResponseWrapperProjectParticipant;
-    }>("/project/participant", {
-        ...opts,
-        method: "POST",
-        body
     });
 }
 /**
@@ -10062,17 +10062,6 @@ export function projectPeriodBudgetStatusGetBudgetStatus(id: number, { fields }:
     });
 }
 /**
- * Delete project activities
- */
-export function projectProjectActivityListDeleteByIds(ids: string, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchText(`/project/projectActivity/list${QS.query(QS.form({
-        ids
-    }))}`, {
-        ...opts,
-        method: "DELETE"
-    });
-}
-/**
  * Add project activity.
  */
 export function projectProjectActivityPost(body?: Blob, opts?: Oazapfts.RequestOpts) {
@@ -10083,6 +10072,17 @@ export function projectProjectActivityPost(body?: Blob, opts?: Oazapfts.RequestO
         ...opts,
         method: "POST",
         body
+    });
+}
+/**
+ * Delete project activities
+ */
+export function projectProjectActivityListDeleteByIds(ids: string, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchText(`/project/projectActivity/list${QS.query(QS.form({
+        ids
+    }))}`, {
+        ...opts,
+        method: "DELETE"
     });
 }
 /**
@@ -10183,43 +10183,6 @@ export function projectControlFormTypeSearch({ from, count, sorting, fields }: {
     });
 }
 /**
- * Create multiple project hourly rates.
- */
-export function projectHourlyRatesListPostList(body?: Blob, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 201;
-        data: ListResponseProjectHourlyRate;
-    }>("/project/hourlyRates/list", {
-        ...opts,
-        method: "POST",
-        body
-    });
-}
-/**
- * Update multiple project hourly rates.
- */
-export function projectHourlyRatesListPutList(body?: Blob, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ListResponseProjectHourlyRate;
-    }>("/project/hourlyRates/list", {
-        ...opts,
-        method: "PUT",
-        body
-    });
-}
-/**
- * Delete project hourly rates.
- */
-export function projectHourlyRatesListDeleteByIds(ids: string, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchText(`/project/hourlyRates/list${QS.query(QS.form({
-        ids
-    }))}`, {
-        ...opts,
-        method: "DELETE"
-    });
-}
-/**
  * Find project hourly rates corresponding with sent data.
  */
 export function projectHourlyRatesSearch({ id, projectId, type, startDateFrom, startDateTo, showInProjectOrder, from, count, sorting, fields }: {
@@ -10263,6 +10226,43 @@ export function projectHourlyRatesPost(body?: Blob, opts?: Oazapfts.RequestOpts)
         ...opts,
         method: "POST",
         body
+    });
+}
+/**
+ * Create multiple project hourly rates.
+ */
+export function projectHourlyRatesListPostList(body?: Blob, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 201;
+        data: ListResponseProjectHourlyRate;
+    }>("/project/hourlyRates/list", {
+        ...opts,
+        method: "POST",
+        body
+    });
+}
+/**
+ * Update multiple project hourly rates.
+ */
+export function projectHourlyRatesListPutList(body?: Blob, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ListResponseProjectHourlyRate;
+    }>("/project/hourlyRates/list", {
+        ...opts,
+        method: "PUT",
+        body
+    });
+}
+/**
+ * Delete project hourly rates.
+ */
+export function projectHourlyRatesListDeleteByIds(ids: string, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchText(`/project/hourlyRates/list${QS.query(QS.form({
+        ids
+    }))}`, {
+        ...opts,
+        method: "DELETE"
     });
 }
 /**
@@ -10333,43 +10333,6 @@ export function projectHourlyRatesDelete(id: number, opts?: Oazapfts.RequestOpts
     });
 }
 /**
- * Create multiple new project specific rates.
- */
-export function projectHourlyRatesProjectSpecificRatesListPostList(body?: Blob, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 201;
-        data: ListResponseProjectSpecificRate;
-    }>("/project/hourlyRates/projectSpecificRates/list", {
-        ...opts,
-        method: "POST",
-        body
-    });
-}
-/**
- * Update multiple project specific rates.
- */
-export function projectHourlyRatesProjectSpecificRatesListPutList(body?: Blob, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ListResponseProjectSpecificRate;
-    }>("/project/hourlyRates/projectSpecificRates/list", {
-        ...opts,
-        method: "PUT",
-        body
-    });
-}
-/**
- * Delete project specific rates.
- */
-export function projectHourlyRatesProjectSpecificRatesListDeleteByIds(ids: string, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchText(`/project/hourlyRates/projectSpecificRates/list${QS.query(QS.form({
-        ids
-    }))}`, {
-        ...opts,
-        method: "DELETE"
-    });
-}
-/**
  * Find project specific rates corresponding with sent data.
  */
 export function projectHourlyRatesProjectSpecificRatesSearch({ id, projectHourlyRateId, employeeId, activityId, from, count, sorting, fields }: {
@@ -10409,6 +10372,43 @@ export function projectHourlyRatesProjectSpecificRatesPost(body?: Blob, opts?: O
         ...opts,
         method: "POST",
         body
+    });
+}
+/**
+ * Create multiple new project specific rates.
+ */
+export function projectHourlyRatesProjectSpecificRatesListPostList(body?: Blob, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 201;
+        data: ListResponseProjectSpecificRate;
+    }>("/project/hourlyRates/projectSpecificRates/list", {
+        ...opts,
+        method: "POST",
+        body
+    });
+}
+/**
+ * Update multiple project specific rates.
+ */
+export function projectHourlyRatesProjectSpecificRatesListPutList(body?: Blob, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ListResponseProjectSpecificRate;
+    }>("/project/hourlyRates/projectSpecificRates/list", {
+        ...opts,
+        method: "PUT",
+        body
+    });
+}
+/**
+ * Delete project specific rates.
+ */
+export function projectHourlyRatesProjectSpecificRatesListDeleteByIds(ids: string, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchText(`/project/hourlyRates/projectSpecificRates/list${QS.query(QS.form({
+        ids
+    }))}`, {
+        ...opts,
+        method: "DELETE"
     });
 }
 /**
@@ -10855,6 +10855,18 @@ export function transportTypeSearch({ supplierId, name, from, count, sorting, fi
     });
 }
 /**
+ * [BETA] Approve deviations. Only available for users that have activated the Logistics Plus Beta-program in 'Our customer account'
+ */
+export function purchaseOrderDeviationApproveApprove(id: number, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ResponseWrapperPurchaseOrder;
+    }>(`/purchaseOrder/deviation/${id}/:approve`, {
+        ...opts,
+        method: "PUT"
+    });
+}
+/**
  * [BETA] Find handled deviations for purchase order. Only available for users that have activated the Logistics Plus Beta-program in 'Our customer account'
  */
 export function purchaseOrderDeviationSearch(purchaseOrderId: number, { from, count, sorting, fields }: {
@@ -10940,18 +10952,6 @@ export function purchaseOrderDeviationUndeliverUndeliver(id: number, opts?: Oaza
     });
 }
 /**
- * [BETA] Approve deviations. Only available for users that have activated the Logistics Plus Beta-program in 'Our customer account'
- */
-export function purchaseOrderDeviationApproveApprove(id: number, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ResponseWrapperPurchaseOrder;
-    }>(`/purchaseOrder/deviation/${id}/:approve`, {
-        ...opts,
-        method: "PUT"
-    });
-}
-/**
  *  [BETA] Get deviation by order line ID. Only available for users that have activated the Logistics Plus Beta-program in 'Our customer account'
  */
 export function purchaseOrderDeviationGet(id: number, { fields }: {
@@ -10984,34 +10984,6 @@ export function purchaseOrderDeviationPut(id: number, body?: Blob, opts?: Oazapf
  */
 export function purchaseOrderDeviationDelete(id: number, opts?: Oazapfts.RequestOpts) {
     return oazapfts.fetchText(`/purchaseOrder/deviation/${id}`, {
-        ...opts,
-        method: "DELETE"
-    });
-}
-/**
- * [BETA] Register multiple goods receipt without an existing purchase order. Only available for users that have activated the Logistics Plus Beta-program in 'Our customer account'
- */
-export function purchaseOrderGoodsReceiptListPostList(body?: Blob, { fields }: {
-    fields?: string;
-} = {}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 201;
-        data: ListResponseGoodsReceipt;
-    }>(`/purchaseOrder/goodsReceipt/list${QS.query(QS.form({
-        fields
-    }))}`, {
-        ...opts,
-        method: "POST",
-        body
-    });
-}
-/**
- * [BETA] Delete multiple goods receipt by ID. Only available for users that have activated the Logistics Plus Beta-program in 'Our customer account'
- */
-export function purchaseOrderGoodsReceiptListDeleteByIds(ids: string, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchText(`/purchaseOrder/goodsReceipt/list${QS.query(QS.form({
-        ids
-    }))}`, {
         ...opts,
         method: "DELETE"
     });
@@ -11060,6 +11032,34 @@ export function purchaseOrderGoodsReceiptPost(body?: Blob, { fields }: {
         ...opts,
         method: "POST",
         body
+    });
+}
+/**
+ * [BETA] Register multiple goods receipt without an existing purchase order. Only available for users that have activated the Logistics Plus Beta-program in 'Our customer account'
+ */
+export function purchaseOrderGoodsReceiptListPostList(body?: Blob, { fields }: {
+    fields?: string;
+} = {}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 201;
+        data: ListResponseGoodsReceipt;
+    }>(`/purchaseOrder/goodsReceipt/list${QS.query(QS.form({
+        fields
+    }))}`, {
+        ...opts,
+        method: "POST",
+        body
+    });
+}
+/**
+ * [BETA] Delete multiple goods receipt by ID. Only available for users that have activated the Logistics Plus Beta-program in 'Our customer account'
+ */
+export function purchaseOrderGoodsReceiptListDeleteByIds(ids: string, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchText(`/purchaseOrder/goodsReceipt/list${QS.query(QS.form({
+        ids
+    }))}`, {
+        ...opts,
+        method: "DELETE"
     });
 }
 /**
@@ -11270,30 +11270,6 @@ export function purchaseOrderGoodsReceiptLineDelete(id: number, opts?: Oazapfts.
     });
 }
 /**
- * [BETA] Create a new list of relations between purchase order and voucher. Only available for users that have activated the Logistics Plus Beta-program in 'Our customer account'
- */
-export function purchaseOrderPurchaseOrderIncomingInvoiceRelationListPostList(body?: Blob, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 201;
-        data: ListResponsePurchaseOrderIncomingInvoiceRelation;
-    }>("/purchaseOrder/purchaseOrderIncomingInvoiceRelation/list", {
-        ...opts,
-        method: "POST",
-        body
-    });
-}
-/**
- * [BETA] Delete multiple purchase order voucher relations. Only available for users that have activated the Logistics Plus Beta-program in 'Our customer account'
- */
-export function purchaseOrderPurchaseOrderIncomingInvoiceRelationListDeleteByIds(ids: string, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchText(`/purchaseOrder/purchaseOrderIncomingInvoiceRelation/list${QS.query(QS.form({
-        ids
-    }))}`, {
-        ...opts,
-        method: "DELETE"
-    });
-}
-/**
  * [BETA] Find purchase order relation to voucher with sent data. Only available for users that have activated the Logistics Plus Beta-program in 'Our customer account'
  */
 export function purchaseOrderPurchaseOrderIncomingInvoiceRelationSearch({ id, orderOutId, voucherId, from, count, sorting, fields }: {
@@ -11331,6 +11307,30 @@ export function purchaseOrderPurchaseOrderIncomingInvoiceRelationPost(body?: Blo
         ...opts,
         method: "POST",
         body
+    });
+}
+/**
+ * [BETA] Create a new list of relations between purchase order and voucher. Only available for users that have activated the Logistics Plus Beta-program in 'Our customer account'
+ */
+export function purchaseOrderPurchaseOrderIncomingInvoiceRelationListPostList(body?: Blob, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 201;
+        data: ListResponsePurchaseOrderIncomingInvoiceRelation;
+    }>("/purchaseOrder/purchaseOrderIncomingInvoiceRelation/list", {
+        ...opts,
+        method: "POST",
+        body
+    });
+}
+/**
+ * [BETA] Delete multiple purchase order voucher relations. Only available for users that have activated the Logistics Plus Beta-program in 'Our customer account'
+ */
+export function purchaseOrderPurchaseOrderIncomingInvoiceRelationListDeleteByIds(ids: string, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchText(`/purchaseOrder/purchaseOrderIncomingInvoiceRelation/list${QS.query(QS.form({
+        ids
+    }))}`, {
+        ...opts,
+        method: "DELETE"
     });
 }
 /**
@@ -11830,6 +11830,40 @@ export function salarySettingsPut(body?: Blob, opts?: Oazapfts.RequestOpts) {
     });
 }
 /**
+ * [BETA] Find holiday settings of current logged in company.
+ */
+export function salarySettingsHolidaySearch({ from, count, sorting, fields }: {
+    "from"?: number;
+    count?: number;
+    sorting?: string;
+    fields?: string;
+} = {}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ListResponseCompanyHoliday;
+    }>(`/salary/settings/holiday${QS.query(QS.form({
+        from,
+        count,
+        sorting,
+        fields
+    }))}`, {
+        ...opts
+    });
+}
+/**
+ * [BETA] Create a holiday setting of current logged in company.
+ */
+export function salarySettingsHolidayPost(body?: Blob, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 201;
+        data: ResponseWrapperCompanyHoliday;
+    }>("/salary/settings/holiday", {
+        ...opts,
+        method: "POST",
+        body
+    });
+}
+/**
  * [BETA] Create multiple holiday settings of current logged in company.
  */
 export function salarySettingsHolidayListPostList(body?: Blob, opts?: Oazapfts.RequestOpts) {
@@ -11867,40 +11901,6 @@ export function salarySettingsHolidayListDeleteByIds(ids: string, opts?: Oazapft
     });
 }
 /**
- * [BETA] Find holiday settings of current logged in company.
- */
-export function salarySettingsHolidaySearch({ from, count, sorting, fields }: {
-    "from"?: number;
-    count?: number;
-    sorting?: string;
-    fields?: string;
-} = {}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ListResponseCompanyHoliday;
-    }>(`/salary/settings/holiday${QS.query(QS.form({
-        from,
-        count,
-        sorting,
-        fields
-    }))}`, {
-        ...opts
-    });
-}
-/**
- * [BETA] Create a holiday setting of current logged in company.
- */
-export function salarySettingsHolidayPost(body?: Blob, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 201;
-        data: ResponseWrapperCompanyHoliday;
-    }>("/salary/settings/holiday", {
-        ...opts,
-        method: "POST",
-        body
-    });
-}
-/**
  * [BETA] update a holiday setting of current logged in company.
  */
 export function salarySettingsHolidayPut(id: number, body?: Blob, opts?: Oazapfts.RequestOpts) {
@@ -11911,43 +11911,6 @@ export function salarySettingsHolidayPut(id: number, body?: Blob, opts?: Oazapft
         ...opts,
         method: "PUT",
         body
-    });
-}
-/**
- * [BETA] Create multiple Pension Schemes.
- */
-export function salarySettingsPensionSchemeListPostList(body?: Blob, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 201;
-        data: ListResponsePensionScheme;
-    }>("/salary/settings/pensionScheme/list", {
-        ...opts,
-        method: "POST",
-        body
-    });
-}
-/**
- * [BETA] update multiple Pension Schemes.
- */
-export function salarySettingsPensionSchemeListPutList(body?: Blob, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ListResponsePensionScheme;
-    }>("/salary/settings/pensionScheme/list", {
-        ...opts,
-        method: "PUT",
-        body
-    });
-}
-/**
- * [BETA] delete multiple Pension Schemes.
- */
-export function salarySettingsPensionSchemeListDeleteByIds(ids: string, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchText(`/salary/settings/pensionScheme/list${QS.query(QS.form({
-        ids
-    }))}`, {
-        ...opts,
-        method: "DELETE"
     });
 }
 /**
@@ -11985,6 +11948,43 @@ export function salarySettingsPensionSchemePost(pensionScheme?: PensionScheme, o
         method: "POST",
         body: pensionScheme
     }));
+}
+/**
+ * [BETA] Create multiple Pension Schemes.
+ */
+export function salarySettingsPensionSchemeListPostList(body?: Blob, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 201;
+        data: ListResponsePensionScheme;
+    }>("/salary/settings/pensionScheme/list", {
+        ...opts,
+        method: "POST",
+        body
+    });
+}
+/**
+ * [BETA] update multiple Pension Schemes.
+ */
+export function salarySettingsPensionSchemeListPutList(body?: Blob, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ListResponsePensionScheme;
+    }>("/salary/settings/pensionScheme/list", {
+        ...opts,
+        method: "PUT",
+        body
+    });
+}
+/**
+ * [BETA] delete multiple Pension Schemes.
+ */
+export function salarySettingsPensionSchemeListDeleteByIds(ids: string, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchText(`/salary/settings/pensionScheme/list${QS.query(QS.form({
+        ids
+    }))}`, {
+        ...opts,
+        method: "DELETE"
+    });
 }
 /**
  * [BETA] Get Pension Scheme for a specific ID
@@ -12182,6 +12182,22 @@ export function supplierDelete(id: number, opts?: Oazapfts.RequestOpts) {
     });
 }
 /**
+ * [BETA] Approve supplier invoice.
+ */
+export function supplierInvoiceApproveApprove(invoiceId: number, { comment }: {
+    comment?: string;
+} = {}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ResponseWrapperSupplierInvoice;
+    }>(`/supplierInvoice/${invoiceId}/:approve${QS.query(QS.form({
+        comment
+    }))}`, {
+        ...opts,
+        method: "PUT"
+    });
+}
+/**
  * [BETA] Find supplierInvoices corresponding with sent data.
  */
 export function supplierInvoiceSearch(invoiceDateFrom: string, invoiceDateTo: string, { id, invoiceNumber, kid, voucherId, supplierId, from, count, sorting, fields }: {
@@ -12212,22 +12228,6 @@ export function supplierInvoiceSearch(invoiceDateFrom: string, invoiceDateTo: st
         fields
     }))}`, {
         ...opts
-    });
-}
-/**
- * [BETA] Approve supplier invoice.
- */
-export function supplierInvoiceApproveApprove(invoiceId: number, { comment }: {
-    comment?: string;
-} = {}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ResponseWrapperSupplierInvoice;
-    }>(`/supplierInvoice/${invoiceId}/:approve${QS.query(QS.form({
-        comment
-    }))}`, {
-        ...opts,
-        method: "PUT"
     });
 }
 /**
@@ -12404,20 +12404,6 @@ export function supplierInvoiceAddPaymentAddPayment(invoiceId: number, paymentTy
     });
 }
 /**
- * [BETA] reject supplier invoice.
- */
-export function supplierInvoiceRejectReject(invoiceId: number, comment: string, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ResponseWrapperSupplierInvoice;
-    }>(`/supplierInvoice/${invoiceId}/:reject${QS.query(QS.form({
-        comment
-    }))}`, {
-        ...opts,
-        method: "PUT"
-    });
-}
-/**
  * [BETA] Get supplierInvoice by ID.
  */
 export function supplierInvoiceGet(id: number, { fields }: {
@@ -12430,6 +12416,20 @@ export function supplierInvoiceGet(id: number, { fields }: {
         fields
     }))}`, {
         ...opts
+    });
+}
+/**
+ * [BETA] reject supplier invoice.
+ */
+export function supplierInvoiceRejectReject(invoiceId: number, comment: string, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ResponseWrapperSupplierInvoice;
+    }>(`/supplierInvoice/${invoiceId}/:reject${QS.query(QS.form({
+        comment
+    }))}`, {
+        ...opts,
+        method: "PUT"
     });
 }
 /**
@@ -12523,78 +12523,6 @@ export function timesheetCompanyHolidayDelete(id: number, opts?: Oazapfts.Reques
     });
 }
 /**
- * Add new timesheet entry. Multiple objects for several users can be sent in the same request.
- */
-export function timesheetEntryListPostList(body?: Blob, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 201;
-        data: ListResponseTimesheetEntry;
-    }>("/timesheet/entry/list", {
-        ...opts,
-        method: "POST",
-        body
-    });
-}
-/**
- * Update timesheet entry. Multiple objects for different users can be sent in the same request.
- */
-export function timesheetEntryListPutList(body?: Blob, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ListResponseTimesheetEntry;
-    }>("/timesheet/entry/list", {
-        ...opts,
-        method: "PUT",
-        body
-    });
-}
-/**
- * Find timesheet entry corresponding with sent data.
- */
-export function timesheetEntrySearch(dateFrom: string, dateTo: string, { id, employeeId, projectId, activityId, comment, from, count, sorting, fields }: {
-    id?: string;
-    employeeId?: string;
-    projectId?: string;
-    activityId?: string;
-    comment?: string;
-    "from"?: number;
-    count?: number;
-    sorting?: string;
-    fields?: string;
-} = {}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: TimesheetEntrySearchResponse;
-    }>(`/timesheet/entry${QS.query(QS.form({
-        id,
-        employeeId,
-        projectId,
-        activityId,
-        dateFrom,
-        dateTo,
-        comment,
-        from,
-        count,
-        sorting,
-        fields
-    }))}`, {
-        ...opts
-    });
-}
-/**
- * Add new timesheet entry. Only one entry per employee/date/activity/project combination is supported.
- */
-export function timesheetEntryPost(body?: Blob, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 201;
-        data: ResponseWrapperTimesheetEntry;
-    }>("/timesheet/entry", {
-        ...opts,
-        method: "POST",
-        body
-    });
-}
-/**
  * Find projects with recent activities (timesheet entry registered).
  */
 export function timesheetEntryRecentProjectsGetRecentProjects({ employeeId, from, count, sorting, fields }: {
@@ -12663,6 +12591,78 @@ export function timesheetEntryTotalHoursGetTotalHours({ employeeId, startDate, e
     });
 }
 /**
+ * Find timesheet entry corresponding with sent data.
+ */
+export function timesheetEntrySearch(dateFrom: string, dateTo: string, { id, employeeId, projectId, activityId, comment, from, count, sorting, fields }: {
+    id?: string;
+    employeeId?: string;
+    projectId?: string;
+    activityId?: string;
+    comment?: string;
+    "from"?: number;
+    count?: number;
+    sorting?: string;
+    fields?: string;
+} = {}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: TimesheetEntrySearchResponse;
+    }>(`/timesheet/entry${QS.query(QS.form({
+        id,
+        employeeId,
+        projectId,
+        activityId,
+        dateFrom,
+        dateTo,
+        comment,
+        from,
+        count,
+        sorting,
+        fields
+    }))}`, {
+        ...opts
+    });
+}
+/**
+ * Add new timesheet entry. Only one entry per employee/date/activity/project combination is supported.
+ */
+export function timesheetEntryPost(body?: Blob, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 201;
+        data: ResponseWrapperTimesheetEntry;
+    }>("/timesheet/entry", {
+        ...opts,
+        method: "POST",
+        body
+    });
+}
+/**
+ * Add new timesheet entry. Multiple objects for several users can be sent in the same request.
+ */
+export function timesheetEntryListPostList(body?: Blob, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 201;
+        data: ListResponseTimesheetEntry;
+    }>("/timesheet/entry/list", {
+        ...opts,
+        method: "POST",
+        body
+    });
+}
+/**
+ * Update timesheet entry. Multiple objects for different users can be sent in the same request.
+ */
+export function timesheetEntryListPutList(body?: Blob, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ListResponseTimesheetEntry;
+    }>("/timesheet/entry/list", {
+        ...opts,
+        method: "PUT",
+        body
+    });
+}
+/**
  * Find timesheet entry by ID.
  */
 export function timesheetEntryGet(id: number, { fields }: {
@@ -12701,48 +12701,6 @@ export function timesheetEntryDelete(id: number, { version }: {
     }))}`, {
         ...opts,
         method: "DELETE"
-    });
-}
-/**
- * approve month(s).  If id is provided the other args are ignored
- */
-export function timesheetMonthApproveApprove({ id, employeeIds, monthYear, approvedUntilDate }: {
-    id?: number;
-    employeeIds?: string;
-    monthYear?: string;
-    approvedUntilDate?: string;
-} = {}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ListResponseMonthlyStatus;
-    }>(`/timesheet/month/:approve${QS.query(QS.form({
-        id,
-        employeeIds,
-        monthYear,
-        approvedUntilDate
-    }))}`, {
-        ...opts,
-        method: "PUT"
-    });
-}
-/**
- * unapprove month(s).  If id is provided the other args are ignored
- */
-export function timesheetMonthUnapproveUnapprove({ id, employeeIds, monthYear }: {
-    id?: number;
-    employeeIds?: string;
-    monthYear?: string;
-} = {}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ListResponseMonthlyStatus;
-    }>(`/timesheet/month/:unapprove${QS.query(QS.form({
-        id,
-        employeeIds,
-        monthYear
-    }))}`, {
-        ...opts,
-        method: "PUT"
     });
 }
 /**
@@ -12789,9 +12747,31 @@ export function timesheetMonthReopenReopen({ id, employeeIds, monthYear }: {
     });
 }
 /**
- * complete month(s).  If id is provided the other args are ignored
+ * approve month(s).  If id is provided the other args are ignored
  */
-export function timesheetMonthCompleteComplete({ id, employeeIds, monthYear }: {
+export function timesheetMonthApproveApprove({ id, employeeIds, monthYear, approvedUntilDate }: {
+    id?: number;
+    employeeIds?: string;
+    monthYear?: string;
+    approvedUntilDate?: string;
+} = {}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ListResponseMonthlyStatus;
+    }>(`/timesheet/month/:approve${QS.query(QS.form({
+        id,
+        employeeIds,
+        monthYear,
+        approvedUntilDate
+    }))}`, {
+        ...opts,
+        method: "PUT"
+    });
+}
+/**
+ * unapprove month(s).  If id is provided the other args are ignored
+ */
+export function timesheetMonthUnapproveUnapprove({ id, employeeIds, monthYear }: {
     id?: number;
     employeeIds?: string;
     monthYear?: string;
@@ -12799,7 +12779,7 @@ export function timesheetMonthCompleteComplete({ id, employeeIds, monthYear }: {
     return oazapfts.fetchJson<{
         status: 200;
         data: ListResponseMonthlyStatus;
-    }>(`/timesheet/month/:complete${QS.query(QS.form({
+    }>(`/timesheet/month/:unapprove${QS.query(QS.form({
         id,
         employeeIds,
         monthYear
@@ -12821,6 +12801,26 @@ export function timesheetMonthGet(id: number, { fields }: {
         fields
     }))}`, {
         ...opts
+    });
+}
+/**
+ * complete month(s).  If id is provided the other args are ignored
+ */
+export function timesheetMonthCompleteComplete({ id, employeeIds, monthYear }: {
+    id?: number;
+    employeeIds?: string;
+    monthYear?: string;
+} = {}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ListResponseMonthlyStatus;
+    }>(`/timesheet/month/:complete${QS.query(QS.form({
+        id,
+        employeeIds,
+        monthYear
+    }))}`, {
+        ...opts,
+        method: "PUT"
     });
 }
 /**
@@ -13034,6 +13034,26 @@ export function timesheetTimeClockStopStop(id: number, { version }: {
     });
 }
 /**
+ * Reopen week. By ID or (ISO-8601 week and employeeId combination).
+ */
+export function timesheetWeekReopenReopen({ id, employeeId, weekYear }: {
+    id?: number;
+    employeeId?: number;
+    weekYear?: string;
+} = {}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ResponseWrapperWeek;
+    }>(`/timesheet/week/:reopen${QS.query(QS.form({
+        id,
+        employeeId,
+        weekYear
+    }))}`, {
+        ...opts,
+        method: "PUT"
+    });
+}
+/**
  * Approve week. By ID or (ISO-8601 week and employeeId combination).
  */
 export function timesheetWeekApproveApprove({ id, employeeId, weekYear }: {
@@ -13074,46 +13094,6 @@ export function timesheetWeekUnapproveUnapprove({ id, employeeId, weekYear }: {
     });
 }
 /**
- * Reopen week. By ID or (ISO-8601 week and employeeId combination).
- */
-export function timesheetWeekReopenReopen({ id, employeeId, weekYear }: {
-    id?: number;
-    employeeId?: number;
-    weekYear?: string;
-} = {}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ResponseWrapperWeek;
-    }>(`/timesheet/week/:reopen${QS.query(QS.form({
-        id,
-        employeeId,
-        weekYear
-    }))}`, {
-        ...opts,
-        method: "PUT"
-    });
-}
-/**
- * Complete week. By ID or (ISO-8601 week and employeeId combination).
- */
-export function timesheetWeekCompleteComplete({ id, employeeId, weekYear }: {
-    id?: number;
-    employeeId?: number;
-    weekYear?: string;
-} = {}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ResponseWrapperWeek;
-    }>(`/timesheet/week/:complete${QS.query(QS.form({
-        id,
-        employeeId,
-        weekYear
-    }))}`, {
-        ...opts,
-        method: "PUT"
-    });
-}
-/**
  * Find weekly status By ID, week/year combination, employeeId. or an approver
  */
 export function timesheetWeekSearch({ ids, employeeIds, weekYear, approvedBy, from, count, sorting, fields }: {
@@ -13140,6 +13120,26 @@ export function timesheetWeekSearch({ ids, employeeIds, weekYear, approvedBy, fr
         fields
     }))}`, {
         ...opts
+    });
+}
+/**
+ * Complete week. By ID or (ISO-8601 week and employeeId combination).
+ */
+export function timesheetWeekCompleteComplete({ id, employeeId, weekYear }: {
+    id?: number;
+    employeeId?: number;
+    weekYear?: string;
+} = {}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ResponseWrapperWeek;
+    }>(`/timesheet/week/:complete${QS.query(QS.form({
+        id,
+        employeeId,
+        weekYear
+    }))}`, {
+        ...opts,
+        method: "PUT"
     });
 }
 /**
@@ -13604,6 +13604,38 @@ export function travelExpensePerDiemCompensationDelete(id: number, opts?: Oazapf
     });
 }
 /**
+ * [BETA] Approve travel expenses.
+ */
+export function travelExpenseApproveApprove({ id }: {
+    id?: string;
+} = {}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ListResponseTravelExpense;
+    }>(`/travelExpense/:approve${QS.query(QS.form({
+        id
+    }))}`, {
+        ...opts,
+        method: "PUT"
+    });
+}
+/**
+ * [BETA] Unapprove travel expenses.
+ */
+export function travelExpenseUnapproveUnapprove({ id }: {
+    id?: string;
+} = {}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ListResponseTravelExpense;
+    }>(`/travelExpense/:unapprove${QS.query(QS.form({
+        id
+    }))}`, {
+        ...opts,
+        method: "PUT"
+    });
+}
+/**
  * [BETA] Find travel expenses corresponding with sent data.
  */
 export function travelExpenseSearch({ employeeId, departmentId, projectId, projectManagerId, departureDateFrom, returnDateTo, state, from, count, sorting, fields }: {
@@ -13735,38 +13767,6 @@ export function travelExpenseUndeliverUndeliver({ id }: {
         status: 200;
         data: ListResponseTravelExpense;
     }>(`/travelExpense/:undeliver${QS.query(QS.form({
-        id
-    }))}`, {
-        ...opts,
-        method: "PUT"
-    });
-}
-/**
- * [BETA] Approve travel expenses.
- */
-export function travelExpenseApproveApprove({ id }: {
-    id?: string;
-} = {}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ListResponseTravelExpense;
-    }>(`/travelExpense/:approve${QS.query(QS.form({
-        id
-    }))}`, {
-        ...opts,
-        method: "PUT"
-    });
-}
-/**
- * [BETA] Unapprove travel expenses.
- */
-export function travelExpenseUnapproveUnapprove({ id }: {
-    id?: string;
-} = {}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ListResponseTravelExpense;
-    }>(`/travelExpense/:unapprove${QS.query(QS.form({
         id
     }))}`, {
         ...opts,
