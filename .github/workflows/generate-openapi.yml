@@ -27,19 +27,8 @@ jobs:
         - name: Checkout
           uses: actions/checkout@v2
 
-        # Generate your OpenAPI document (if you don't write it manually)
-
-        # Use the action to generate a client package
-        # This uses the default path for the openapi document and thus assumes there is an openapi.json in the current workspace.
-        - name: Generate TypeScript Client
-          uses: openapi-generators/openapitools-generator-action@v1
-          with:
-            generator: javascript
-            config-file: typescript-fetch-generator-config.yml
-            openapi-url: https://tripletex.no/v2/swagger.json
-
-        # Do something with the generated client (likely publishing it somewhere)
-        - name: Do something with the client
-          run: |
-            cd javascript-client
-            ls
+        - name: Setup Node.js environment
+          uses: actions/setup-node@v3.0.0
+          
+        - name: Generate
+          run: npx oazapfts https://tripletex.no/v2/swagger.json api.ts
