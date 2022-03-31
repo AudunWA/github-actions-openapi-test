@@ -538,8 +538,8 @@ export type Inventory = {
     lastStocking?: string;
     status?: string;
     hasLocations?: boolean;
-    mainInventory?: boolean;
     inactive?: boolean;
+    mainInventory?: boolean;
 };
 export type InventoryLocation = {
     id?: number;
@@ -1539,15 +1539,15 @@ export type DocumentArchive = {
     archiveDate?: string;
     mimeType: string;
 };
+export type ResponseWrapperDocumentArchive = {
+    value?: DocumentArchive;
+};
 export type ListResponseDocumentArchive = {
     fullResultSize?: number;
     "from"?: number;
     count?: number;
     versionDigest?: string;
     values?: DocumentArchive[];
-};
-export type ResponseWrapperDocumentArchive = {
-    value?: DocumentArchive;
 };
 export type ListResponseEmployee = {
     fullResultSize?: number;
@@ -2059,6 +2059,13 @@ export type ListResponseVatType = {
     versionDigest?: string;
     values?: VatType[];
 };
+export type ListResponseVoucher = {
+    fullResultSize?: number;
+    "from"?: number;
+    count?: number;
+    versionDigest?: string;
+    values?: Voucher[];
+};
 export type VoucherSearchResponse = {
     fullResultSize?: number;
     "from"?: number;
@@ -2069,13 +2076,6 @@ export type VoucherSearchResponse = {
 };
 export type ResponseWrapperVoucher = {
     value?: Voucher;
-};
-export type ListResponseVoucher = {
-    fullResultSize?: number;
-    "from"?: number;
-    count?: number;
-    versionDigest?: string;
-    values?: Voucher[];
 };
 export type Delete = {
     available?: boolean;
@@ -5204,46 +5204,6 @@ export function documentGet(id: number, { fields }: {
     });
 }
 /**
- * [BETA] Find documents archived associated with customer object type.
- */
-export function documentArchiveCustomerGetCustomer(id: number, { periodDateFrom, periodDateTo, from, count, sorting, fields }: {
-    periodDateFrom?: string;
-    periodDateTo?: string;
-    "from"?: number;
-    count?: number;
-    sorting?: string;
-    fields?: string;
-} = {}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ListResponseDocumentArchive;
-    }>(`/documentArchive/customer/${id}${QS.query(QS.form({
-        periodDateFrom,
-        periodDateTo,
-        from,
-        count,
-        sorting,
-        fields
-    }))}`, {
-        ...opts
-    });
-}
-/**
- * [BETA] Upload file to Customer Document Archive.
- */
-export function documentArchiveCustomerCustomerPost(id: number, body: {
-    file: Blob;
-}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 201;
-        data: ResponseWrapperDocumentArchive;
-    }>(`/documentArchive/customer/${id}`, oazapfts.multipart({
-        ...opts,
-        method: "POST",
-        body
-    }));
-}
-/**
  * [BETA] Upload a file to the document archive reception. Send as multipart form.
  */
 export function documentArchiveReceptionReceptionPost(body: {
@@ -5293,6 +5253,46 @@ export function documentArchiveProjectProjectPost(id: number, body: {
         status: 201;
         data: ResponseWrapperDocumentArchive;
     }>(`/documentArchive/project/${id}`, oazapfts.multipart({
+        ...opts,
+        method: "POST",
+        body
+    }));
+}
+/**
+ * [BETA] Find documents archived associated with customer object type.
+ */
+export function documentArchiveCustomerGetCustomer(id: number, { periodDateFrom, periodDateTo, from, count, sorting, fields }: {
+    periodDateFrom?: string;
+    periodDateTo?: string;
+    "from"?: number;
+    count?: number;
+    sorting?: string;
+    fields?: string;
+} = {}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ListResponseDocumentArchive;
+    }>(`/documentArchive/customer/${id}${QS.query(QS.form({
+        periodDateFrom,
+        periodDateTo,
+        from,
+        count,
+        sorting,
+        fields
+    }))}`, {
+        ...opts
+    });
+}
+/**
+ * [BETA] Upload file to Customer Document Archive.
+ */
+export function documentArchiveCustomerCustomerPost(id: number, body: {
+    file: Blob;
+}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 201;
+        data: ResponseWrapperDocumentArchive;
+    }>(`/documentArchive/customer/${id}`, oazapfts.multipart({
         ...opts,
         method: "POST",
         body
@@ -6359,6 +6359,29 @@ export function employeeStandardTimePut(id: number, body?: Blob, opts?: Oazapfts
     });
 }
 /**
+ * Find all entitlements for user.
+ */
+export function employeeEntitlementSearch({ employeeId, from, count, sorting, fields }: {
+    employeeId?: number;
+    "from"?: number;
+    count?: number;
+    sorting?: string;
+    fields?: string;
+} = {}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ListResponseEntitlement;
+    }>(`/employee/entitlement${QS.query(QS.form({
+        employeeId,
+        from,
+        count,
+        sorting,
+        fields
+    }))}`, {
+        ...opts
+    });
+}
+/**
  * [BETA] Update employee entitlements in client account.
  */
 export function employeeEntitlementGrantClientEntitlementsByTemplateGrantClientEntitlementsByTemplate(employeeId: number, customerId: number, template: "NONE_PRIVILEGES" | "STANDARD_PRIVILEGES_ACCOUNTANT" | "STANDARD_PRIVILEGES_AUDITOR" | "ALL_PRIVILEGES" | "AGRO_READ_ONLY" | "AGRO_READ_APPROVE" | "AGRO_READ_WRITE" | "AGRO_READ_WRITE_APPROVE" | "MAMUT_PAYROLL_ADMIN" | "MAMUT_PAYROLL_CLERK" | "AGRO_PAYROLL_ADMIN" | "AGRO_PAYROLL_CLERK" | "AGRO_INVOICE_ADMIN" | "AGRO_INVOICE_CLERK", { addToExisting }: {
@@ -6384,29 +6407,6 @@ export function employeeEntitlementGrantEntitlementsByTemplateGrantEntitlementsB
     }))}`, {
         ...opts,
         method: "PUT"
-    });
-}
-/**
- * Find all entitlements for user.
- */
-export function employeeEntitlementSearch({ employeeId, from, count, sorting, fields }: {
-    employeeId?: number;
-    "from"?: number;
-    count?: number;
-    sorting?: string;
-    fields?: string;
-} = {}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ListResponseEntitlement;
-    }>(`/employee/entitlement${QS.query(QS.form({
-        employeeId,
-        from,
-        count,
-        sorting,
-        fields
-    }))}`, {
-        ...opts
     });
 }
 /**
@@ -7017,20 +7017,6 @@ export function invoicePost(body?: Blob, { sendToCustomer, paymentTypeId, paidAm
     });
 }
 /**
- * Send invoice by ID and sendType. Optionally override email recipient.
- */
-export function invoiceSendSend(id: number, sendType: "EMAIL" | "EHF" | "AVTALEGIRO" | "EFAKTURA" | "VIPPS" | "PAPER", { overrideEmailAddress }: {
-    overrideEmailAddress?: string;
-} = {}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchText(`/invoice/${id}/:send${QS.query(QS.form({
-        sendType,
-        overrideEmailAddress
-    }))}`, {
-        ...opts,
-        method: "PUT"
-    });
-}
-/**
  * [BETA] Create multiple invoices. Max 100 at a time.
  */
 export function invoiceListPostList(body?: Blob, { sendToCustomer, fields }: {
@@ -7047,6 +7033,20 @@ export function invoiceListPostList(body?: Blob, { sendToCustomer, fields }: {
         ...opts,
         method: "POST",
         body
+    });
+}
+/**
+ * Send invoice by ID and sendType. Optionally override email recipient.
+ */
+export function invoiceSendSend(id: number, sendType: "EMAIL" | "EHF" | "AVTALEGIRO" | "EFAKTURA" | "VIPPS" | "PAPER", { overrideEmailAddress }: {
+    overrideEmailAddress?: string;
+} = {}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchText(`/invoice/${id}/:send${QS.query(QS.form({
+        sendType,
+        overrideEmailAddress
+    }))}`, {
+        ...opts,
+        method: "PUT"
     });
 }
 /**
@@ -7806,6 +7806,26 @@ export function ledgerVatTypeSearch({ id, number, typeOfVat, vatDate, from, coun
     });
 }
 /**
+ * [BETA] Upload a document to create one or more vouchers. Valid document formats are PDF, PNG, JPEG, TIFF and EHF. Send as multipart form.
+ */
+export function ledgerVoucherImportDocumentImportDocument(body: {
+    file: Blob;
+    description?: string;
+}, { split }: {
+    split?: boolean;
+} = {}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 201;
+        data: ListResponseVoucher;
+    }>(`/ledger/voucher/importDocument${QS.query(QS.form({
+        split
+    }))}`, oazapfts.multipart({
+        ...opts,
+        method: "POST",
+        body
+    }));
+}
+/**
  * Find vouchers corresponding with sent data.
  */
 export function ledgerVoucherSearch(dateFrom: string, dateTo: string, { id, number, numberFrom, numberTo, typeId, from, count, sorting, fields }: {
@@ -7947,26 +7967,6 @@ export function ledgerVoucherSendToLedgerSendToLedger(id: number, { version, num
         ...opts,
         method: "PUT"
     });
-}
-/**
- * [BETA] Upload a document to create one or more vouchers. Valid document formats are PDF, PNG, JPEG, TIFF and EHF. Send as multipart form.
- */
-export function ledgerVoucherImportDocumentImportDocument(body: {
-    file: Blob;
-    description?: string;
-}, { split }: {
-    split?: boolean;
-} = {}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 201;
-        data: ListResponseVoucher;
-    }>(`/ledger/voucher/importDocument${QS.query(QS.form({
-        split
-    }))}`, oazapfts.multipart({
-        ...opts,
-        method: "POST",
-        body
-    }));
 }
 /**
  * [BETA] Find non-posted vouchers.
@@ -8155,6 +8155,28 @@ export function ledgerVoucherHistoricalAttachmentUploadAttachment(voucherId: num
     }));
 }
 /**
+ * [BETA] Deletes all historical vouchers. Requires the "All vouchers" and "Advanced Voucher" permissions.
+ */
+export function ledgerVoucherHistoricalReverseHistoricalVouchersReverseHistoricalVouchers(opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchText("/ledger/voucher/historical/:reverseHistoricalVouchers", {
+        ...opts,
+        method: "PUT"
+    });
+}
+/**
+ * [BETA] Create one employee, based on import from external system. Validation is less strict, ie. employee department isn't required.
+ */
+export function ledgerVoucherHistoricalEmployeePostEmployee(body?: Blob, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 201;
+        data: ResponseWrapperEmployee;
+    }>("/ledger/voucher/historical/employee", {
+        ...opts,
+        method: "POST",
+        body
+    });
+}
+/**
  * [BETA] API endpoint for creating historical vouchers. These are vouchers created outside Tripletex, and should be from closed accounting years. The intended usage is to get access to historical transcations in Tripletex. Also creates postings. All amount fields in postings will be used. VAT postings must be included, these are not generated automatically like they are for normal vouchers in Tripletex. Requires the \"All vouchers\" and \"Advanced Voucher\" permissions.
  */
 export function ledgerVoucherHistoricalHistoricalPostHistorical(body?: Blob, { comment }: {
@@ -8172,15 +8194,6 @@ export function ledgerVoucherHistoricalHistoricalPostHistorical(body?: Blob, { c
     });
 }
 /**
- * [BETA] Deletes all historical vouchers. Requires the "All vouchers" and "Advanced Voucher" permissions.
- */
-export function ledgerVoucherHistoricalReverseHistoricalVouchersReverseHistoricalVouchers(opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchText("/ledger/voucher/historical/:reverseHistoricalVouchers", {
-        ...opts,
-        method: "PUT"
-    });
-}
-/**
  * [BETA] Close postings.
  */
 export function ledgerVoucherHistoricalClosePostingsClosePostings({ postingIds }: {
@@ -8191,19 +8204,6 @@ export function ledgerVoucherHistoricalClosePostingsClosePostings({ postingIds }
     }))}`, {
         ...opts,
         method: "PUT"
-    });
-}
-/**
- * [BETA] Create one employee, based on import from external system. Validation is less strict, ie. employee department isn't required.
- */
-export function ledgerVoucherHistoricalEmployeePostEmployee(body?: Blob, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 201;
-        data: ResponseWrapperEmployee;
-    }>("/ledger/voucher/historical/employee", {
-        ...opts,
-        method: "POST",
-        body
     });
 }
 /**
@@ -12404,6 +12404,20 @@ export function supplierInvoiceAddPaymentAddPayment(invoiceId: number, paymentTy
     });
 }
 /**
+ * [BETA] reject supplier invoice.
+ */
+export function supplierInvoiceRejectReject(invoiceId: number, comment: string, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ResponseWrapperSupplierInvoice;
+    }>(`/supplierInvoice/${invoiceId}/:reject${QS.query(QS.form({
+        comment
+    }))}`, {
+        ...opts,
+        method: "PUT"
+    });
+}
+/**
  * [BETA] Get supplierInvoice by ID.
  */
 export function supplierInvoiceGet(id: number, { fields }: {
@@ -12416,20 +12430,6 @@ export function supplierInvoiceGet(id: number, { fields }: {
         fields
     }))}`, {
         ...opts
-    });
-}
-/**
- * [BETA] reject supplier invoice.
- */
-export function supplierInvoiceRejectReject(invoiceId: number, comment: string, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ResponseWrapperSupplierInvoice;
-    }>(`/supplierInvoice/${invoiceId}/:reject${QS.query(QS.form({
-        comment
-    }))}`, {
-        ...opts,
-        method: "PUT"
     });
 }
 /**
@@ -12789,6 +12789,21 @@ export function timesheetMonthUnapproveUnapprove({ id, employeeIds, monthYear }:
     });
 }
 /**
+ * Find monthly status entry by ID.
+ */
+export function timesheetMonthGet(id: number, { fields }: {
+    fields?: string;
+} = {}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ResponseWrapperMonthlyStatus;
+    }>(`/timesheet/month/${id}${QS.query(QS.form({
+        fields
+    }))}`, {
+        ...opts
+    });
+}
+/**
  * complete month(s).  If id is provided the other args are ignored
  */
 export function timesheetMonthCompleteComplete({ id, employeeIds, monthYear }: {
@@ -12806,21 +12821,6 @@ export function timesheetMonthCompleteComplete({ id, employeeIds, monthYear }: {
     }))}`, {
         ...opts,
         method: "PUT"
-    });
-}
-/**
- * Find monthly status entry by ID.
- */
-export function timesheetMonthGet(id: number, { fields }: {
-    fields?: string;
-} = {}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ResponseWrapperMonthlyStatus;
-    }>(`/timesheet/month/${id}${QS.query(QS.form({
-        fields
-    }))}`, {
-        ...opts
     });
 }
 /**
@@ -13094,26 +13094,6 @@ export function timesheetWeekUnapproveUnapprove({ id, employeeId, weekYear }: {
     });
 }
 /**
- * Complete week. By ID or (ISO-8601 week and employeeId combination).
- */
-export function timesheetWeekCompleteComplete({ id, employeeId, weekYear }: {
-    id?: number;
-    employeeId?: number;
-    weekYear?: string;
-} = {}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ResponseWrapperWeek;
-    }>(`/timesheet/week/:complete${QS.query(QS.form({
-        id,
-        employeeId,
-        weekYear
-    }))}`, {
-        ...opts,
-        method: "PUT"
-    });
-}
-/**
  * Find weekly status By ID, week/year combination, employeeId. or an approver
  */
 export function timesheetWeekSearch({ ids, employeeIds, weekYear, approvedBy, from, count, sorting, fields }: {
@@ -13140,6 +13120,26 @@ export function timesheetWeekSearch({ ids, employeeIds, weekYear, approvedBy, fr
         fields
     }))}`, {
         ...opts
+    });
+}
+/**
+ * Complete week. By ID or (ISO-8601 week and employeeId combination).
+ */
+export function timesheetWeekCompleteComplete({ id, employeeId, weekYear }: {
+    id?: number;
+    employeeId?: number;
+    weekYear?: string;
+} = {}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ResponseWrapperWeek;
+    }>(`/timesheet/week/:complete${QS.query(QS.form({
+        id,
+        employeeId,
+        weekYear
+    }))}`, {
+        ...opts,
+        method: "PUT"
     });
 }
 /**
