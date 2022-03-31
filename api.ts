@@ -3210,15 +3210,15 @@ export type SupplierInvoice = {
     originalInvoiceDocumentId?: number;
     approvalListElements?: VoucherApprovalListElement[];
 };
-export type ResponseWrapperSupplierInvoice = {
-    value?: SupplierInvoice;
-};
 export type ListResponseSupplierInvoice = {
     fullResultSize?: number;
     "from"?: number;
     count?: number;
     versionDigest?: string;
     values?: SupplierInvoice[];
+};
+export type ResponseWrapperSupplierInvoice = {
+    value?: SupplierInvoice;
 };
 export type ResponseWrapperVoucherApprovalListElement = {
     value?: VoucherApprovalListElement;
@@ -3240,9 +3240,6 @@ export type ListResponseCompanyHolidays = {
 };
 export type ResponseWrapperCompanyHolidays = {
     value?: CompanyHolidays;
-};
-export type ResponseWrapperBigDecimal = {
-    value?: number;
 };
 export type TimeClock = {
     id?: number;
@@ -3296,6 +3293,9 @@ export type ListResponseTimesheetEntry = {
     count?: number;
     versionDigest?: string;
     values?: TimesheetEntry[];
+};
+export type ResponseWrapperBigDecimal = {
+    value?: number;
 };
 export type HourSummary = {
     sumHours?: number;
@@ -5244,6 +5244,101 @@ export function documentArchiveCustomerCustomerPost(id: number, body: {
     }));
 }
 /**
+ * [BETA] Upload a file to the document archive reception. Send as multipart form.
+ */
+export function documentArchiveReceptionReceptionPost(body: {
+    file: Blob;
+}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 201;
+        data: ResponseWrapperDocumentArchive;
+    }>("/documentArchive/reception", oazapfts.multipart({
+        ...opts,
+        method: "POST",
+        body
+    }));
+}
+/**
+ * [BETA] Find documents archived associated with project object type.
+ */
+export function documentArchiveProjectGetProject(id: number, { periodDateFrom, periodDateTo, from, count, sorting, fields }: {
+    periodDateFrom?: string;
+    periodDateTo?: string;
+    "from"?: number;
+    count?: number;
+    sorting?: string;
+    fields?: string;
+} = {}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ListResponseDocumentArchive;
+    }>(`/documentArchive/project/${id}${QS.query(QS.form({
+        periodDateFrom,
+        periodDateTo,
+        from,
+        count,
+        sorting,
+        fields
+    }))}`, {
+        ...opts
+    });
+}
+/**
+ * [BETA] Upload file to Project Document Archive.
+ */
+export function documentArchiveProjectProjectPost(id: number, body: {
+    file: Blob;
+}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 201;
+        data: ResponseWrapperDocumentArchive;
+    }>(`/documentArchive/project/${id}`, oazapfts.multipart({
+        ...opts,
+        method: "POST",
+        body
+    }));
+}
+/**
+ * [BETA] Find documents archived associated with supplier object type.
+ */
+export function documentArchiveSupplierGetSupplier(id: number, { periodDateFrom, periodDateTo, from, count, sorting, fields }: {
+    periodDateFrom?: string;
+    periodDateTo?: string;
+    "from"?: number;
+    count?: number;
+    sorting?: string;
+    fields?: string;
+} = {}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ListResponseDocumentArchive;
+    }>(`/documentArchive/supplier/${id}${QS.query(QS.form({
+        periodDateFrom,
+        periodDateTo,
+        from,
+        count,
+        sorting,
+        fields
+    }))}`, {
+        ...opts
+    });
+}
+/**
+ * [BETA] Upload file to Supplier Document Archive.
+ */
+export function documentArchiveSupplierSupplierPost(id: number, body: {
+    file: Blob;
+}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 201;
+        data: ResponseWrapperDocumentArchive;
+    }>(`/documentArchive/supplier/${id}`, oazapfts.multipart({
+        ...opts,
+        method: "POST",
+        body
+    }));
+}
+/**
  * [BETA] Find documents archived associated with employee object type.
  */
 export function documentArchiveEmployeeGetEmployee(id: number, { periodDateFrom, periodDateTo, from, count, sorting, fields }: {
@@ -5398,101 +5493,6 @@ export function documentArchiveProspectProspectPost(id: number, body: {
         status: 201;
         data: ResponseWrapperDocumentArchive;
     }>(`/documentArchive/prospect/${id}`, oazapfts.multipart({
-        ...opts,
-        method: "POST",
-        body
-    }));
-}
-/**
- * [BETA] Find documents archived associated with supplier object type.
- */
-export function documentArchiveSupplierGetSupplier(id: number, { periodDateFrom, periodDateTo, from, count, sorting, fields }: {
-    periodDateFrom?: string;
-    periodDateTo?: string;
-    "from"?: number;
-    count?: number;
-    sorting?: string;
-    fields?: string;
-} = {}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ListResponseDocumentArchive;
-    }>(`/documentArchive/supplier/${id}${QS.query(QS.form({
-        periodDateFrom,
-        periodDateTo,
-        from,
-        count,
-        sorting,
-        fields
-    }))}`, {
-        ...opts
-    });
-}
-/**
- * [BETA] Upload file to Supplier Document Archive.
- */
-export function documentArchiveSupplierSupplierPost(id: number, body: {
-    file: Blob;
-}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 201;
-        data: ResponseWrapperDocumentArchive;
-    }>(`/documentArchive/supplier/${id}`, oazapfts.multipart({
-        ...opts,
-        method: "POST",
-        body
-    }));
-}
-/**
- * [BETA] Find documents archived associated with project object type.
- */
-export function documentArchiveProjectGetProject(id: number, { periodDateFrom, periodDateTo, from, count, sorting, fields }: {
-    periodDateFrom?: string;
-    periodDateTo?: string;
-    "from"?: number;
-    count?: number;
-    sorting?: string;
-    fields?: string;
-} = {}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ListResponseDocumentArchive;
-    }>(`/documentArchive/project/${id}${QS.query(QS.form({
-        periodDateFrom,
-        periodDateTo,
-        from,
-        count,
-        sorting,
-        fields
-    }))}`, {
-        ...opts
-    });
-}
-/**
- * [BETA] Upload file to Project Document Archive.
- */
-export function documentArchiveProjectProjectPost(id: number, body: {
-    file: Blob;
-}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 201;
-        data: ResponseWrapperDocumentArchive;
-    }>(`/documentArchive/project/${id}`, oazapfts.multipart({
-        ...opts,
-        method: "POST",
-        body
-    }));
-}
-/**
- * [BETA] Upload a file to the document archive reception. Send as multipart form.
- */
-export function documentArchiveReceptionReceptionPost(body: {
-    file: Blob;
-}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 201;
-        data: ResponseWrapperDocumentArchive;
-    }>("/documentArchive/reception", oazapfts.multipart({
         ...opts,
         method: "POST",
         body
@@ -6359,29 +6359,6 @@ export function employeeStandardTimePut(id: number, body?: Blob, opts?: Oazapfts
     });
 }
 /**
- * Find all entitlements for user.
- */
-export function employeeEntitlementSearch({ employeeId, from, count, sorting, fields }: {
-    employeeId?: number;
-    "from"?: number;
-    count?: number;
-    sorting?: string;
-    fields?: string;
-} = {}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ListResponseEntitlement;
-    }>(`/employee/entitlement${QS.query(QS.form({
-        employeeId,
-        from,
-        count,
-        sorting,
-        fields
-    }))}`, {
-        ...opts
-    });
-}
-/**
  * [BETA] Update employee entitlements in client account.
  */
 export function employeeEntitlementGrantClientEntitlementsByTemplateGrantClientEntitlementsByTemplate(employeeId: number, customerId: number, template: "NONE_PRIVILEGES" | "STANDARD_PRIVILEGES_ACCOUNTANT" | "STANDARD_PRIVILEGES_AUDITOR" | "ALL_PRIVILEGES" | "AGRO_READ_ONLY" | "AGRO_READ_APPROVE" | "AGRO_READ_WRITE" | "AGRO_READ_WRITE_APPROVE" | "MAMUT_PAYROLL_ADMIN" | "MAMUT_PAYROLL_CLERK" | "AGRO_PAYROLL_ADMIN" | "AGRO_PAYROLL_CLERK" | "AGRO_INVOICE_ADMIN" | "AGRO_INVOICE_CLERK", { addToExisting }: {
@@ -6407,6 +6384,29 @@ export function employeeEntitlementGrantEntitlementsByTemplateGrantEntitlementsB
     }))}`, {
         ...opts,
         method: "PUT"
+    });
+}
+/**
+ * Find all entitlements for user.
+ */
+export function employeeEntitlementSearch({ employeeId, from, count, sorting, fields }: {
+    employeeId?: number;
+    "from"?: number;
+    count?: number;
+    sorting?: string;
+    fields?: string;
+} = {}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ListResponseEntitlement;
+    }>(`/employee/entitlement${QS.query(QS.form({
+        employeeId,
+        from,
+        count,
+        sorting,
+        fields
+    }))}`, {
+        ...opts
     });
 }
 /**
@@ -7017,6 +7017,20 @@ export function invoicePost(body?: Blob, { sendToCustomer, paymentTypeId, paidAm
     });
 }
 /**
+ * Send invoice by ID and sendType. Optionally override email recipient.
+ */
+export function invoiceSendSend(id: number, sendType: "EMAIL" | "EHF" | "AVTALEGIRO" | "EFAKTURA" | "VIPPS" | "PAPER", { overrideEmailAddress }: {
+    overrideEmailAddress?: string;
+} = {}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchText(`/invoice/${id}/:send${QS.query(QS.form({
+        sendType,
+        overrideEmailAddress
+    }))}`, {
+        ...opts,
+        method: "PUT"
+    });
+}
+/**
  * [BETA] Create multiple invoices. Max 100 at a time.
  */
 export function invoiceListPostList(body?: Blob, { sendToCustomer, fields }: {
@@ -7033,20 +7047,6 @@ export function invoiceListPostList(body?: Blob, { sendToCustomer, fields }: {
         ...opts,
         method: "POST",
         body
-    });
-}
-/**
- * Send invoice by ID and sendType. Optionally override email recipient.
- */
-export function invoiceSendSend(id: number, sendType: "EMAIL" | "EHF" | "AVTALEGIRO" | "EFAKTURA" | "VIPPS" | "PAPER", { overrideEmailAddress }: {
-    overrideEmailAddress?: string;
-} = {}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchText(`/invoice/${id}/:send${QS.query(QS.form({
-        sendType,
-        overrideEmailAddress
-    }))}`, {
-        ...opts,
-        method: "PUT"
     });
 }
 /**
@@ -8155,28 +8155,6 @@ export function ledgerVoucherHistoricalAttachmentUploadAttachment(voucherId: num
     }));
 }
 /**
- * [BETA] Deletes all historical vouchers. Requires the "All vouchers" and "Advanced Voucher" permissions.
- */
-export function ledgerVoucherHistoricalReverseHistoricalVouchersReverseHistoricalVouchers(opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchText("/ledger/voucher/historical/:reverseHistoricalVouchers", {
-        ...opts,
-        method: "PUT"
-    });
-}
-/**
- * [BETA] Create one employee, based on import from external system. Validation is less strict, ie. employee department isn't required.
- */
-export function ledgerVoucherHistoricalEmployeePostEmployee(body?: Blob, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 201;
-        data: ResponseWrapperEmployee;
-    }>("/ledger/voucher/historical/employee", {
-        ...opts,
-        method: "POST",
-        body
-    });
-}
-/**
  * [BETA] API endpoint for creating historical vouchers. These are vouchers created outside Tripletex, and should be from closed accounting years. The intended usage is to get access to historical transcations in Tripletex. Also creates postings. All amount fields in postings will be used. VAT postings must be included, these are not generated automatically like they are for normal vouchers in Tripletex. Requires the \"All vouchers\" and \"Advanced Voucher\" permissions.
  */
 export function ledgerVoucherHistoricalHistoricalPostHistorical(body?: Blob, { comment }: {
@@ -8194,6 +8172,15 @@ export function ledgerVoucherHistoricalHistoricalPostHistorical(body?: Blob, { c
     });
 }
 /**
+ * [BETA] Deletes all historical vouchers. Requires the "All vouchers" and "Advanced Voucher" permissions.
+ */
+export function ledgerVoucherHistoricalReverseHistoricalVouchersReverseHistoricalVouchers(opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchText("/ledger/voucher/historical/:reverseHistoricalVouchers", {
+        ...opts,
+        method: "PUT"
+    });
+}
+/**
  * [BETA] Close postings.
  */
 export function ledgerVoucherHistoricalClosePostingsClosePostings({ postingIds }: {
@@ -8204,6 +8191,19 @@ export function ledgerVoucherHistoricalClosePostingsClosePostings({ postingIds }
     }))}`, {
         ...opts,
         method: "PUT"
+    });
+}
+/**
+ * [BETA] Create one employee, based on import from external system. Validation is less strict, ie. employee department isn't required.
+ */
+export function ledgerVoucherHistoricalEmployeePostEmployee(body?: Blob, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 201;
+        data: ResponseWrapperEmployee;
+    }>("/ledger/voucher/historical/employee", {
+        ...opts,
+        method: "POST",
+        body
     });
 }
 /**
@@ -10855,18 +10855,6 @@ export function transportTypeSearch({ supplierId, name, from, count, sorting, fi
     });
 }
 /**
- * [BETA] Approve deviations. Only available for users that have activated the Logistics Plus Beta-program in 'Our customer account'
- */
-export function purchaseOrderDeviationApproveApprove(id: number, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ResponseWrapperPurchaseOrder;
-    }>(`/purchaseOrder/deviation/${id}/:approve`, {
-        ...opts,
-        method: "PUT"
-    });
-}
-/**
  * [BETA] Find handled deviations for purchase order. Only available for users that have activated the Logistics Plus Beta-program in 'Our customer account'
  */
 export function purchaseOrderDeviationSearch(purchaseOrderId: number, { from, count, sorting, fields }: {
@@ -10925,6 +10913,18 @@ export function purchaseOrderDeviationListPutList(body?: Blob, opts?: Oazapfts.R
         ...opts,
         method: "PUT",
         body
+    });
+}
+/**
+ * [BETA] Approve deviations. Only available for users that have activated the Logistics Plus Beta-program in 'Our customer account'
+ */
+export function purchaseOrderDeviationApproveApprove(id: number, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ResponseWrapperPurchaseOrder;
+    }>(`/purchaseOrder/deviation/${id}/:approve`, {
+        ...opts,
+        method: "PUT"
     });
 }
 /**
@@ -12182,22 +12182,6 @@ export function supplierDelete(id: number, opts?: Oazapfts.RequestOpts) {
     });
 }
 /**
- * [BETA] Approve supplier invoice.
- */
-export function supplierInvoiceApproveApprove(invoiceId: number, { comment }: {
-    comment?: string;
-} = {}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ResponseWrapperSupplierInvoice;
-    }>(`/supplierInvoice/${invoiceId}/:approve${QS.query(QS.form({
-        comment
-    }))}`, {
-        ...opts,
-        method: "PUT"
-    });
-}
-/**
  * [BETA] Find supplierInvoices corresponding with sent data.
  */
 export function supplierInvoiceSearch(invoiceDateFrom: string, invoiceDateTo: string, { id, invoiceNumber, kid, voucherId, supplierId, from, count, sorting, fields }: {
@@ -12228,6 +12212,22 @@ export function supplierInvoiceSearch(invoiceDateFrom: string, invoiceDateTo: st
         fields
     }))}`, {
         ...opts
+    });
+}
+/**
+ * [BETA] Approve supplier invoice.
+ */
+export function supplierInvoiceApproveApprove(invoiceId: number, { comment }: {
+    comment?: string;
+} = {}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ResponseWrapperSupplierInvoice;
+    }>(`/supplierInvoice/${invoiceId}/:approve${QS.query(QS.form({
+        comment
+    }))}`, {
+        ...opts,
+        method: "PUT"
     });
 }
 /**
@@ -12523,74 +12523,6 @@ export function timesheetCompanyHolidayDelete(id: number, opts?: Oazapfts.Reques
     });
 }
 /**
- * Find projects with recent activities (timesheet entry registered).
- */
-export function timesheetEntryRecentProjectsGetRecentProjects({ employeeId, from, count, sorting, fields }: {
-    employeeId?: number;
-    "from"?: number;
-    count?: number;
-    sorting?: string;
-    fields?: string;
-} = {}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ListResponseProject;
-    }>(`/timesheet/entry/>recentProjects${QS.query(QS.form({
-        employeeId,
-        from,
-        count,
-        sorting,
-        fields
-    }))}`, {
-        ...opts
-    });
-}
-/**
- * Find recently used timesheet activities.
- */
-export function timesheetEntryRecentActivitiesGetRecentActivities(projectId: number, { employeeId, from, count, sorting, fields }: {
-    employeeId?: number;
-    "from"?: number;
-    count?: number;
-    sorting?: string;
-    fields?: string;
-} = {}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ListResponseActivity;
-    }>(`/timesheet/entry/>recentActivities${QS.query(QS.form({
-        employeeId,
-        projectId,
-        from,
-        count,
-        sorting,
-        fields
-    }))}`, {
-        ...opts
-    });
-}
-/**
- * Find total hours registered on an employee in a specific period.
- */
-export function timesheetEntryTotalHoursGetTotalHours({ employeeId, startDate, endDate, fields }: {
-    employeeId?: number;
-    startDate?: string;
-    endDate?: string;
-    fields?: string;
-} = {}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ResponseWrapperBigDecimal;
-    }>(`/timesheet/entry/>totalHours${QS.query(QS.form({
-        employeeId,
-        startDate,
-        endDate,
-        fields
-    }))}`, {
-        ...opts
-    });
-}
-/**
  * Find timesheet entry corresponding with sent data.
  */
 export function timesheetEntrySearch(dateFrom: string, dateTo: string, { id, employeeId, projectId, activityId, comment, from, count, sorting, fields }: {
@@ -12660,6 +12592,74 @@ export function timesheetEntryListPutList(body?: Blob, opts?: Oazapfts.RequestOp
         ...opts,
         method: "PUT",
         body
+    });
+}
+/**
+ * Find projects with recent activities (timesheet entry registered).
+ */
+export function timesheetEntryRecentProjectsGetRecentProjects({ employeeId, from, count, sorting, fields }: {
+    employeeId?: number;
+    "from"?: number;
+    count?: number;
+    sorting?: string;
+    fields?: string;
+} = {}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ListResponseProject;
+    }>(`/timesheet/entry/>recentProjects${QS.query(QS.form({
+        employeeId,
+        from,
+        count,
+        sorting,
+        fields
+    }))}`, {
+        ...opts
+    });
+}
+/**
+ * Find recently used timesheet activities.
+ */
+export function timesheetEntryRecentActivitiesGetRecentActivities(projectId: number, { employeeId, from, count, sorting, fields }: {
+    employeeId?: number;
+    "from"?: number;
+    count?: number;
+    sorting?: string;
+    fields?: string;
+} = {}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ListResponseActivity;
+    }>(`/timesheet/entry/>recentActivities${QS.query(QS.form({
+        employeeId,
+        projectId,
+        from,
+        count,
+        sorting,
+        fields
+    }))}`, {
+        ...opts
+    });
+}
+/**
+ * Find total hours registered on an employee in a specific period.
+ */
+export function timesheetEntryTotalHoursGetTotalHours({ employeeId, startDate, endDate, fields }: {
+    employeeId?: number;
+    startDate?: string;
+    endDate?: string;
+    fields?: string;
+} = {}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ResponseWrapperBigDecimal;
+    }>(`/timesheet/entry/>totalHours${QS.query(QS.form({
+        employeeId,
+        startDate,
+        endDate,
+        fields
+    }))}`, {
+        ...opts
     });
 }
 /**
@@ -12789,21 +12789,6 @@ export function timesheetMonthUnapproveUnapprove({ id, employeeIds, monthYear }:
     });
 }
 /**
- * Find monthly status entry by ID.
- */
-export function timesheetMonthGet(id: number, { fields }: {
-    fields?: string;
-} = {}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ResponseWrapperMonthlyStatus;
-    }>(`/timesheet/month/${id}${QS.query(QS.form({
-        fields
-    }))}`, {
-        ...opts
-    });
-}
-/**
  * complete month(s).  If id is provided the other args are ignored
  */
 export function timesheetMonthCompleteComplete({ id, employeeIds, monthYear }: {
@@ -12821,6 +12806,21 @@ export function timesheetMonthCompleteComplete({ id, employeeIds, monthYear }: {
     }))}`, {
         ...opts,
         method: "PUT"
+    });
+}
+/**
+ * Find monthly status entry by ID.
+ */
+export function timesheetMonthGet(id: number, { fields }: {
+    fields?: string;
+} = {}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ResponseWrapperMonthlyStatus;
+    }>(`/timesheet/month/${id}${QS.query(QS.form({
+        fields
+    }))}`, {
+        ...opts
     });
 }
 /**
@@ -13094,6 +13094,26 @@ export function timesheetWeekUnapproveUnapprove({ id, employeeId, weekYear }: {
     });
 }
 /**
+ * Complete week. By ID or (ISO-8601 week and employeeId combination).
+ */
+export function timesheetWeekCompleteComplete({ id, employeeId, weekYear }: {
+    id?: number;
+    employeeId?: number;
+    weekYear?: string;
+} = {}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ResponseWrapperWeek;
+    }>(`/timesheet/week/:complete${QS.query(QS.form({
+        id,
+        employeeId,
+        weekYear
+    }))}`, {
+        ...opts,
+        method: "PUT"
+    });
+}
+/**
  * Find weekly status By ID, week/year combination, employeeId. or an approver
  */
 export function timesheetWeekSearch({ ids, employeeIds, weekYear, approvedBy, from, count, sorting, fields }: {
@@ -13120,26 +13140,6 @@ export function timesheetWeekSearch({ ids, employeeIds, weekYear, approvedBy, fr
         fields
     }))}`, {
         ...opts
-    });
-}
-/**
- * Complete week. By ID or (ISO-8601 week and employeeId combination).
- */
-export function timesheetWeekCompleteComplete({ id, employeeId, weekYear }: {
-    id?: number;
-    employeeId?: number;
-    weekYear?: string;
-} = {}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ResponseWrapperWeek;
-    }>(`/timesheet/week/:complete${QS.query(QS.form({
-        id,
-        employeeId,
-        weekYear
-    }))}`, {
-        ...opts,
-        method: "PUT"
     });
 }
 /**
@@ -13604,38 +13604,6 @@ export function travelExpensePerDiemCompensationDelete(id: number, opts?: Oazapf
     });
 }
 /**
- * [BETA] Approve travel expenses.
- */
-export function travelExpenseApproveApprove({ id }: {
-    id?: string;
-} = {}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ListResponseTravelExpense;
-    }>(`/travelExpense/:approve${QS.query(QS.form({
-        id
-    }))}`, {
-        ...opts,
-        method: "PUT"
-    });
-}
-/**
- * [BETA] Unapprove travel expenses.
- */
-export function travelExpenseUnapproveUnapprove({ id }: {
-    id?: string;
-} = {}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ListResponseTravelExpense;
-    }>(`/travelExpense/:unapprove${QS.query(QS.form({
-        id
-    }))}`, {
-        ...opts,
-        method: "PUT"
-    });
-}
-/**
  * [BETA] Find travel expenses corresponding with sent data.
  */
 export function travelExpenseSearch({ employeeId, departmentId, projectId, projectManagerId, departureDateFrom, returnDateTo, state, from, count, sorting, fields }: {
@@ -13681,6 +13649,38 @@ export function travelExpensePost(body?: Blob, opts?: Oazapfts.RequestOpts) {
         ...opts,
         method: "POST",
         body
+    });
+}
+/**
+ * [BETA] Approve travel expenses.
+ */
+export function travelExpenseApproveApprove({ id }: {
+    id?: string;
+} = {}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ListResponseTravelExpense;
+    }>(`/travelExpense/:approve${QS.query(QS.form({
+        id
+    }))}`, {
+        ...opts,
+        method: "PUT"
+    });
+}
+/**
+ * [BETA] Unapprove travel expenses.
+ */
+export function travelExpenseUnapproveUnapprove({ id }: {
+    id?: string;
+} = {}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ListResponseTravelExpense;
+    }>(`/travelExpense/:unapprove${QS.query(QS.form({
+        id
+    }))}`, {
+        ...opts,
+        method: "PUT"
     });
 }
 /**
