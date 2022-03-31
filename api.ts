@@ -1539,15 +1539,15 @@ export type DocumentArchive = {
     archiveDate?: string;
     mimeType: string;
 };
+export type ResponseWrapperDocumentArchive = {
+    value?: DocumentArchive;
+};
 export type ListResponseDocumentArchive = {
     fullResultSize?: number;
     "from"?: number;
     count?: number;
     versionDigest?: string;
     values?: DocumentArchive[];
-};
-export type ResponseWrapperDocumentArchive = {
-    value?: DocumentArchive;
 };
 export type ListResponseEmployee = {
     fullResultSize?: number;
@@ -5204,6 +5204,61 @@ export function documentGet(id: number, { fields }: {
     });
 }
 /**
+ * [BETA] Upload a file to the document archive reception. Send as multipart form.
+ */
+export function documentArchiveReceptionReceptionPost(body: {
+    file: Blob;
+}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 201;
+        data: ResponseWrapperDocumentArchive;
+    }>("/documentArchive/reception", oazapfts.multipart({
+        ...opts,
+        method: "POST",
+        body
+    }));
+}
+/**
+ * [BETA] Find documents archived associated with project object type.
+ */
+export function documentArchiveProjectGetProject(id: number, { periodDateFrom, periodDateTo, from, count, sorting, fields }: {
+    periodDateFrom?: string;
+    periodDateTo?: string;
+    "from"?: number;
+    count?: number;
+    sorting?: string;
+    fields?: string;
+} = {}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ListResponseDocumentArchive;
+    }>(`/documentArchive/project/${id}${QS.query(QS.form({
+        periodDateFrom,
+        periodDateTo,
+        from,
+        count,
+        sorting,
+        fields
+    }))}`, {
+        ...opts
+    });
+}
+/**
+ * [BETA] Upload file to Project Document Archive.
+ */
+export function documentArchiveProjectProjectPost(id: number, body: {
+    file: Blob;
+}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 201;
+        data: ResponseWrapperDocumentArchive;
+    }>(`/documentArchive/project/${id}`, oazapfts.multipart({
+        ...opts,
+        method: "POST",
+        body
+    }));
+}
+/**
  * [BETA] Find documents archived associated with customer object type.
  */
 export function documentArchiveCustomerGetCustomer(id: number, { periodDateFrom, periodDateTo, from, count, sorting, fields }: {
@@ -5244,15 +5299,40 @@ export function documentArchiveCustomerCustomerPost(id: number, body: {
     }));
 }
 /**
- * [BETA] Upload a file to the document archive reception. Send as multipart form.
+ * [BETA] Find documents archived associated with supplier object type.
  */
-export function documentArchiveReceptionReceptionPost(body: {
+export function documentArchiveSupplierGetSupplier(id: number, { periodDateFrom, periodDateTo, from, count, sorting, fields }: {
+    periodDateFrom?: string;
+    periodDateTo?: string;
+    "from"?: number;
+    count?: number;
+    sorting?: string;
+    fields?: string;
+} = {}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ListResponseDocumentArchive;
+    }>(`/documentArchive/supplier/${id}${QS.query(QS.form({
+        periodDateFrom,
+        periodDateTo,
+        from,
+        count,
+        sorting,
+        fields
+    }))}`, {
+        ...opts
+    });
+}
+/**
+ * [BETA] Upload file to Supplier Document Archive.
+ */
+export function documentArchiveSupplierSupplierPost(id: number, body: {
     file: Blob;
 }, opts?: Oazapfts.RequestOpts) {
     return oazapfts.fetchJson<{
         status: 201;
         data: ResponseWrapperDocumentArchive;
-    }>("/documentArchive/reception", oazapfts.multipart({
+    }>(`/documentArchive/supplier/${id}`, oazapfts.multipart({
         ...opts,
         method: "POST",
         body
@@ -5413,86 +5493,6 @@ export function documentArchiveProspectProspectPost(id: number, body: {
         status: 201;
         data: ResponseWrapperDocumentArchive;
     }>(`/documentArchive/prospect/${id}`, oazapfts.multipart({
-        ...opts,
-        method: "POST",
-        body
-    }));
-}
-/**
- * [BETA] Find documents archived associated with supplier object type.
- */
-export function documentArchiveSupplierGetSupplier(id: number, { periodDateFrom, periodDateTo, from, count, sorting, fields }: {
-    periodDateFrom?: string;
-    periodDateTo?: string;
-    "from"?: number;
-    count?: number;
-    sorting?: string;
-    fields?: string;
-} = {}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ListResponseDocumentArchive;
-    }>(`/documentArchive/supplier/${id}${QS.query(QS.form({
-        periodDateFrom,
-        periodDateTo,
-        from,
-        count,
-        sorting,
-        fields
-    }))}`, {
-        ...opts
-    });
-}
-/**
- * [BETA] Upload file to Supplier Document Archive.
- */
-export function documentArchiveSupplierSupplierPost(id: number, body: {
-    file: Blob;
-}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 201;
-        data: ResponseWrapperDocumentArchive;
-    }>(`/documentArchive/supplier/${id}`, oazapfts.multipart({
-        ...opts,
-        method: "POST",
-        body
-    }));
-}
-/**
- * [BETA] Find documents archived associated with project object type.
- */
-export function documentArchiveProjectGetProject(id: number, { periodDateFrom, periodDateTo, from, count, sorting, fields }: {
-    periodDateFrom?: string;
-    periodDateTo?: string;
-    "from"?: number;
-    count?: number;
-    sorting?: string;
-    fields?: string;
-} = {}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ListResponseDocumentArchive;
-    }>(`/documentArchive/project/${id}${QS.query(QS.form({
-        periodDateFrom,
-        periodDateTo,
-        from,
-        count,
-        sorting,
-        fields
-    }))}`, {
-        ...opts
-    });
-}
-/**
- * [BETA] Upload file to Project Document Archive.
- */
-export function documentArchiveProjectProjectPost(id: number, body: {
-    file: Blob;
-}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 201;
-        data: ResponseWrapperDocumentArchive;
-    }>(`/documentArchive/project/${id}`, oazapfts.multipart({
         ...opts,
         method: "POST",
         body
@@ -5864,49 +5864,6 @@ export function employeeEmploymentDetailsPut(id: number, body?: Blob, opts?: Oaz
     });
 }
 /**
- * [BETA] Find all maritime employment type IDs.
- */
-export function employeeEmploymentEmploymentTypeMaritimeEmploymentTypeGetMaritimeEmploymentType(type: "SHIP_REGISTER" | "SHIP_TYPE" | "TRADE_AREA", { from, count, sorting, fields }: {
-    "from"?: number;
-    count?: number;
-    sorting?: string;
-    fields?: string;
-} = {}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ListResponseEmploymentType;
-    }>(`/employee/employment/employmentType/maritimeEmploymentType${QS.query(QS.form({
-        type,
-        from,
-        count,
-        sorting,
-        fields
-    }))}`, {
-        ...opts
-    });
-}
-/**
- * [BETA] Find all salary type IDs.
- */
-export function employeeEmploymentEmploymentTypeSalaryTypeGetSalaryType({ from, count, sorting, fields }: {
-    "from"?: number;
-    count?: number;
-    sorting?: string;
-    fields?: string;
-} = {}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ListResponseEmploymentType;
-    }>(`/employee/employment/employmentType/salaryType${QS.query(QS.form({
-        from,
-        count,
-        sorting,
-        fields
-    }))}`, {
-        ...opts
-    });
-}
-/**
  * [BETA] Find all schedule type IDs.
  */
 export function employeeEmploymentEmploymentTypeScheduleTypeGetScheduleType({ from, count, sorting, fields }: {
@@ -5961,6 +5918,49 @@ export function employeeEmploymentEmploymentTypeEmploymentEndReasonTypeGetEmploy
         status: 200;
         data: ListResponseEmploymentType;
     }>(`/employee/employment/employmentType/employmentEndReasonType${QS.query(QS.form({
+        from,
+        count,
+        sorting,
+        fields
+    }))}`, {
+        ...opts
+    });
+}
+/**
+ * [BETA] Find all maritime employment type IDs.
+ */
+export function employeeEmploymentEmploymentTypeMaritimeEmploymentTypeGetMaritimeEmploymentType(type: "SHIP_REGISTER" | "SHIP_TYPE" | "TRADE_AREA", { from, count, sorting, fields }: {
+    "from"?: number;
+    count?: number;
+    sorting?: string;
+    fields?: string;
+} = {}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ListResponseEmploymentType;
+    }>(`/employee/employment/employmentType/maritimeEmploymentType${QS.query(QS.form({
+        type,
+        from,
+        count,
+        sorting,
+        fields
+    }))}`, {
+        ...opts
+    });
+}
+/**
+ * [BETA] Find all salary type IDs.
+ */
+export function employeeEmploymentEmploymentTypeSalaryTypeGetSalaryType({ from, count, sorting, fields }: {
+    "from"?: number;
+    count?: number;
+    sorting?: string;
+    fields?: string;
+} = {}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ListResponseEmploymentType;
+    }>(`/employee/employment/employmentType/salaryType${QS.query(QS.form({
         from,
         count,
         sorting,
@@ -7856,6 +7856,43 @@ export function ledgerVoucherPost(body?: Blob, { sendToLedger }: {
     });
 }
 /**
+ * [BETA] Upload a document to create one or more vouchers. Valid document formats are PDF, PNG, JPEG, TIFF and EHF. Send as multipart form.
+ */
+export function ledgerVoucherImportDocumentImportDocument(body: {
+    file: Blob;
+    description?: string;
+}, { split }: {
+    split?: boolean;
+} = {}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 201;
+        data: ListResponseVoucher;
+    }>(`/ledger/voucher/importDocument${QS.query(QS.form({
+        split
+    }))}`, oazapfts.multipart({
+        ...opts,
+        method: "POST",
+        body
+    }));
+}
+/**
+ * [BETA] Update multiple vouchers. Postings with guiRow==0 will be deleted and regenerated.
+ */
+export function ledgerVoucherListPutList(body?: Blob, { sendToLedger }: {
+    sendToLedger?: boolean;
+} = {}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ListResponseVoucher;
+    }>(`/ledger/voucher/list${QS.query(QS.form({
+        sendToLedger
+    }))}`, {
+        ...opts,
+        method: "PUT",
+        body
+    });
+}
+/**
  * Upload attachment to voucher. If the voucher already has an attachment the content will be appended to the existing attachment as new PDF page(s). Valid document formats are PDF, PNG, JPEG and TIFF. Non PDF formats will be converted to PDF. Send as multipart form.
  */
 export function ledgerVoucherAttachmentUploadAttachment(voucherId: number, body: {
@@ -7883,43 +7920,6 @@ export function ledgerVoucherAttachmentDeleteAttachment(voucherId: number, { ver
         ...opts,
         method: "DELETE"
     });
-}
-/**
- * [BETA] Update multiple vouchers. Postings with guiRow==0 will be deleted and regenerated.
- */
-export function ledgerVoucherListPutList(body?: Blob, { sendToLedger }: {
-    sendToLedger?: boolean;
-} = {}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ListResponseVoucher;
-    }>(`/ledger/voucher/list${QS.query(QS.form({
-        sendToLedger
-    }))}`, {
-        ...opts,
-        method: "PUT",
-        body
-    });
-}
-/**
- * [BETA] Upload a document to create one or more vouchers. Valid document formats are PDF, PNG, JPEG, TIFF and EHF. Send as multipart form.
- */
-export function ledgerVoucherImportDocumentImportDocument(body: {
-    file: Blob;
-    description?: string;
-}, { split }: {
-    split?: boolean;
-} = {}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 201;
-        data: ListResponseVoucher;
-    }>(`/ledger/voucher/importDocument${QS.query(QS.form({
-        split
-    }))}`, oazapfts.multipart({
-        ...opts,
-        method: "POST",
-        body
-    }));
 }
 /**
  * [BETA] Find non-posted vouchers.
@@ -12404,20 +12404,6 @@ export function supplierInvoiceAddPaymentAddPayment(invoiceId: number, paymentTy
     });
 }
 /**
- * [BETA] reject supplier invoice.
- */
-export function supplierInvoiceRejectReject(invoiceId: number, comment: string, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ResponseWrapperSupplierInvoice;
-    }>(`/supplierInvoice/${invoiceId}/:reject${QS.query(QS.form({
-        comment
-    }))}`, {
-        ...opts,
-        method: "PUT"
-    });
-}
-/**
  * [BETA] Get supplierInvoice by ID.
  */
 export function supplierInvoiceGet(id: number, { fields }: {
@@ -12430,6 +12416,20 @@ export function supplierInvoiceGet(id: number, { fields }: {
         fields
     }))}`, {
         ...opts
+    });
+}
+/**
+ * [BETA] reject supplier invoice.
+ */
+export function supplierInvoiceRejectReject(invoiceId: number, comment: string, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ResponseWrapperSupplierInvoice;
+    }>(`/supplierInvoice/${invoiceId}/:reject${QS.query(QS.form({
+        comment
+    }))}`, {
+        ...opts,
+        method: "PUT"
     });
 }
 /**
