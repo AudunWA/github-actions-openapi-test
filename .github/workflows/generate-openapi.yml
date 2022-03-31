@@ -30,5 +30,7 @@ jobs:
         - name: Setup Node.js environment
           uses: actions/setup-node@v3.0.0
           
+        - name: Download spec
+          run: curl -O https://tripletex.no/v2/swagger.json
         - name: Generate
-          run: npx oazapfts https://tripletex.no/v2/swagger.json api.ts
+          run: npx oazapfts swagger.json api.ts
