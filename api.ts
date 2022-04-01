@@ -1776,6 +1776,15 @@ export type ListResponseEntitlement = {
 export type ResponseWrapperEntitlement = {
     value?: Entitlement;
 };
+export type EventInfoDescription = {
+    description?: string;
+    payloadModel?: string;
+};
+export type ResponseWrapperMapStringEventInfoDescription = {
+    value?: {
+        [key: string]: EventInfoDescription;
+    };
+};
 export type WebHookWrapper = {
     value?: object;
     event?: string;
@@ -1790,15 +1799,6 @@ export type EventInfoDto = {
 };
 export type ResponseWrapperEventInfoDto = {
     value?: EventInfoDto;
-};
-export type EventInfoDescription = {
-    description?: string;
-    payloadModel?: string;
-};
-export type ResponseWrapperMapStringEventInfoDescription = {
-    value?: {
-        [key: string]: EventInfoDescription;
-    };
 };
 export type Subscription = {
     id?: number;
@@ -4077,19 +4077,6 @@ export function bankReconciliationClosedWithUnmatchedTransactionsClosedWithUnmat
     });
 }
 /**
- * Add an adjustment to reconciliation by ID.
- */
-export function bankReconciliationAdjustmentAdjustment(id: number, body?: Blob, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ListResponseBankReconciliationAdjustment;
-    }>(`/bank/reconciliation/${id}/:adjustment`, {
-        ...opts,
-        method: "PUT",
-        body
-    });
-}
-/**
  * Get bank reconciliation.
  */
 export function bankReconciliationGet(id: number, { fields }: {
@@ -4124,6 +4111,19 @@ export function bankReconciliationDelete(id: number, opts?: Oazapfts.RequestOpts
     return oazapfts.fetchText(`/bank/reconciliation/${id}`, {
         ...opts,
         method: "DELETE"
+    });
+}
+/**
+ * Add an adjustment to reconciliation by ID.
+ */
+export function bankReconciliationAdjustmentAdjustment(id: number, body?: Blob, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ListResponseBankReconciliationAdjustment;
+    }>(`/bank/reconciliation/${id}/:adjustment`, {
+        ...opts,
+        method: "PUT",
+        body
     });
 }
 /**
@@ -6450,21 +6450,6 @@ export function employeeEntitlementGet(id: number, { fields }: {
     });
 }
 /**
- * [BETA] Get example webhook payload
- */
-export function eventExample(eventType: string, { fields }: {
-    fields?: string;
-} = {}, opts?: Oazapfts.RequestOpts) {
-    return oazapfts.fetchJson<{
-        status: 200;
-        data: ResponseWrapperEventInfoDto;
-    }>(`/event/${eventType}${QS.query(QS.form({
-        fields
-    }))}`, {
-        ...opts
-    });
-}
-/**
  * [BETA] Get all (WebHook) event keys.
  */
 export function eventGet({ fields }: {
@@ -6474,6 +6459,21 @@ export function eventGet({ fields }: {
         status: 200;
         data: ResponseWrapperMapStringEventInfoDescription;
     }>(`/event${QS.query(QS.form({
+        fields
+    }))}`, {
+        ...opts
+    });
+}
+/**
+ * [BETA] Get example webhook payload
+ */
+export function eventExample(eventType: string, { fields }: {
+    fields?: string;
+} = {}, opts?: Oazapfts.RequestOpts) {
+    return oazapfts.fetchJson<{
+        status: 200;
+        data: ResponseWrapperEventInfoDto;
+    }>(`/event/${eventType}${QS.query(QS.form({
         fields
     }))}`, {
         ...opts
