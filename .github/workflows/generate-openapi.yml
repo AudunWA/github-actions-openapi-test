@@ -6,9 +6,9 @@ name: Generate client libraries
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
   #schedule:
   # Every hour
   #- cron:  '0 * * * *'
@@ -19,36 +19,39 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   generate-ts-client:
-      runs-on: ubuntu-latest
-      name: Generate TypeScript client
-      steps:
+    runs-on: ubuntu-latest
+    name: Generate TypeScript client
+    steps:
+      # Checkout your code
+      - name: Checkout
+        uses: actions/checkout@v2
 
-        # Checkout your code
-        - name: Checkout
-          uses: actions/checkout@v2
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3.0.0
 
-        - name: Setup Node.js environment
-          uses: actions/setup-node@v3.0.0
-          
-        - name: Download spec
-          run: curl -O https://tripletex.no/v2/swagger.json
-        - name: Find spec version
-          run: echo "spec_version=$(npx json -f swagger.json info.version)" >> $GITHUB_ENV
-        - name: Generate
-          run: npx oazapfts swagger.json api.ts
-        - name: Check if there are changes
-          id: changes
-          uses: UnicornGlobal/has-changes-action@v1.0.11
-        - name: Commit files
-          if: steps.changes.outputs.changed == 1
-          run: |
-            git config user.name 'github-actions[bot]'
-            git config user.email 'github-actions[bot]@users.noreply.github.com'
-            git add swagger.json api.ts
-            git commit -m "${{ env.spec_version }}"
-        - name: Push changes
-          if: steps.changes.outputs.changed == 1
-          uses: ad-m/github-push-action@master
-          with:
-            github_token: ${{ secrets.GITHUB_TOKEN }}
-            branch: ${{ github.ref }}
+      - name: Download spec
+        run: curl -O https://tripletex.no/v2/swagger.json
+      - name: Find spec version
+        run: echo "spec_version=$(npx json -f swagger.json info.version)" >> $GITHUB_ENV
+      - name: Generate
+        run: npx oazapfts swagger.json api.ts
+      - name: Check for changes
+        run: |
+          if ! git diff-index --quiet HEAD; then
+              echo "changes_exist=true" >> $GITHUB_ENV
+          else
+              echo "changes_exist=false" >> $GITHUB_ENV
+          fi
+      - name: Commit files
+        if: env.changes_exist == 'true'
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          git add swagger.json api.ts
+          git commit -m "${{ env.spec_version }}"
+      - name: Push changes
+        if: env.changes_exist == 'true'
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
